@@ -1,0 +1,2233 @@
+TOP（1）用户命令TOP（1）
+
+
+
+名称
+       顶部 - 显示Linux进程
+
+
+概要
+       top -hv | -bcHiOSs -d secs -n max -u | U user -p pid -o fld -w [cols]
+
+
+       传统的开关` - '和空格是可选的。
+
+
+描述
+       顶级程序提供运行的动态实时视图
+       系统。它可以显示系统摘要信息以及a
+       当前由Linux管理的进程或线程列表
+       核心。显示的系统摘要信息的类型和
+       为进程显示的信息的类型，顺序和大小
+       所有用户都可配置，并且可以进行配置
+       帐篷重启。
+
+       该程序为进程提供有限的交互式界面
+       操纵以及更广泛的接口
+       个人配置 - 涵盖其歌剧的各个方面 - 
+       灰。虽然本文档中提到了top，但是
+       您可以随意命名该程序。那个新名字，
+       可能是别名，然后会反映在顶部的显示屏上
+       在读取和写入配置文件时使用。
+
+
+概述
+   文档
+       剩下的目录
+
+           1.命令行选项
+           2.摘要显示
+              一个。 UPTIME和LOAD平均值
+              湾任务和CPU状态
+              C。内存使用情况
+           3.字段/列显示
+              一个。字段描述
+              湾管理领域
+           4.交互命令
+              一个。全局命令
+              湾摘要区域命令
+              C。任务区域命令
+                 1.外观
+                 2.内容
+                 3.尺寸
+                 4.排序
+              d。颜色映射
+           5.替代显示规定
+              一个。 WINDOWS概述
+              湾Windows命令
+              C。滚动窗口
+              d。在窗口中搜索
+              即在窗口中过滤
+           6.文件
+              一个。系统配置文件
+              湾个人配置文件
+              C。添加检查条目
+           7.愚蠢的窍门采样器
+              一个。内核魔术
+              湾弹跳Windows
+              C。大鸟窗
+              d。 Ol'Witcitcheroo
+           8. BUGS，9。历史前顶部，10。作者，11。另见
+
+
+   手术
+       当操作顶部时，两个最重要的键是帮助（h或
+       ？）键和退出（'q'）键。或者，你可以简单地使用
+       完成后传统的中断键（^ C）。
+
+       第一次启动时，您将看到这些
+       主屏幕上的传统元素：1）摘要区; 2）
+       字段/列标题; 3）任务区。其中每一个都是
+       在接下来的部分中进行了探讨。还有一个输入/ Mes-
+       需要的摘要区域和列标题之间的sage行
+       没有进一步解释。
+
+       主要顶部屏幕通常非常适应以下变化
+       X-Windows下的最小尺寸。其他顶级屏幕可能更少
+       所以，特别是那些有静态文本的人。它最终取决于，
+       但是，在您的特定窗口管理器和终端仿真器上。
+       可能有时他们对终端尺寸的观点和
+       租金内容与顶部视图不同，后者始终基于
+       操作系统调用。
+
+       执行任何重新调整操作后，如果顶部屏幕已损坏，
+       看似不完整或无序，只需输入一些无效的东西 - 
+       通常会像标点字符或光标移动键一样
+       恢复它。在极端情况下，以下序列几乎是
+       tainly意志：
+              key / cmd目标
+              ^ Z暂停顶部
+              fg恢复顶部
+              <Left>强制重绘屏幕（如有必要）
+
+       但如果显示屏仍然损坏，那么还有一个步骤
+       可以试试。在top被挂起后插入此命令但是
+       在恢复它之前。
+              key / cmd目标
+              重置恢复终端设置
+
+       注意：顶部显示屏的宽度将限制为512个位置。
+       显示所有字段大约需要250个字符。
+       剩余的屏幕宽度通常分配给任何可变宽度
+       列目前可见。可变宽度列，例如
+       COMMAND，在主题3a中注明。字段描述。实际
+       输出宽度也可能受-w开关的影响，即.w开关
+       在主题1中讨论过。命令行选项。
+
+       最后，top的一些屏幕或功能需要使用cur-
+       如标准箭头键加上Home，End，
+       PgUp和PgDn键。如果您的终端或模拟器不提供
+       这些键，以下组合被接受为替代
+       表3-6：
+              关键等效键组合
+              向上alt + \或alt + k
+              向下alt + /或alt + j
+              左Alt + <或alt + h
+              右Alt +>或alt + l（小写L）
+              PgUp alt + Up或alt + ctrl + k
+              PgDn alt + Down或alt + ctrl + j
+              主页alt +左​​或alt + ctrl + h
+              结束alt +右或alt + ctrl + l
+
+       出现提示时，向上和向下箭头键具有特殊意义
+       用<Enter>键终止的行输入。那些钥匙，或
+       它们的别名，可用于检索以前的输入行
+       然后可以编辑和重新输入。还有四个
+       键可用于面向行的输入。
+              关键的特殊意义
+              向上调用旧字符串进行重新编辑
+              向下调用较新的字符串或删除整行
+              在插入和改写模式之间插入切换
+              删除光标处删除的字符，向左移动其他字符
+              主页跳转到输入行的开头
+              结束跳转到输入行的结尾
+
+
+   启动默认值
+       因此，以下启动默认值假定没有配置文件
+       没有用户自定义。即便如此，带有星号的项目也是如此
+       （`*'）可以通过命令行覆盖。全部是
+       在以下章节中详细解释。
+
+           全局默认
+              A  -  Alt显示关闭（全屏）
+            * d  - 延迟时间1.5秒
+            * H  - 线程模式关闭（总结为任务）
+              I  -  Irix模式开启（不，`solaris'smp）
+            * p  -  PID监控关闭（显示所有流程）
+            * s  - 安全模式关闭（不安全）
+              B  - 粗体启用开启（是的，全局加粗）
+           摘要 - 区 - 默认
+              l  - 加载平均/正常运行时间（因此程序名称）
+              t  - 任务/ Cpu状态开（1 + 1行，见'1'）
+              m  - 内存/交换使用（2行值）
+              1  - 单个Cpu关闭（因此多个cpu）
+           任务区，默认
+              b  -  Bold hilite Off（使用'反向'）
+            * c  - 命令行关闭（名称，而不是cmdline）
+            * i  - 空闲任务开启（显示所有任务）
+              J  -  Num右对齐（不左对齐）
+              j  -  Str右对齐（不对齐）
+              R  - 反向排序打开（从高到低）
+            * S  - 累计休息时间（不，死孩子）
+            * u  - 用户过滤器关闭（仅显示euid）
+            * U  - 用户过滤器关闭（显示任何uid）
+              V  - 森林视图开（显示为分支）
+              x  - 列hilite关闭（否，排序字段）
+              y  - 行hilite On（是的，正在运行的任务）
+              z  -  color / mono On（显示颜色）
+
+
+1.命令行选项
+       top的命令行语法包括：
+
+         -hv | -bcHiOSs -d secs -n max -u | U user -p pid -o fld -w [cols]
+
+       通常强制的开关（' - '）甚至空白都是com-
+       完全可选的。
+
+
+       -h | -v：帮助/版本
+            显示库版本和使用提示，然后退出。
+
+
+       -b：批处理模式操作
+            在批处理模式下启动，这对发送很有用
+            从顶部输出到其他程序或文件。在这
+            模式，top将不接受输入并运行直到迭代
+            限制你使用`-n'命令行选项设置或直到
+            杀害。
+
+
+       -c：命令行/程序名称切换
+            从最后记住的'c'状态开始反转。
+            因此，如果top显示命令行，那么现在该字段
+            将显示程序名称，反之亦然。见'c'之间
+            有关其他信息的活动命令。
+
+
+       -d：延迟时间间隔为：-d ss.t（secs.tenths）
+            指定屏幕更新之间的延迟，并覆盖屏幕更新
+            个人配置文件中的相应值或
+            启动默认值。以后可以用'd'改变
+            或's'交互式命令。
+
+            分数秒被尊重，但负数不是
+            允许。但是，在所有情况下，都禁止这种更改
+            如果top以安全模式运行，则root除外（除非
+            使用了's'命令行选项）。有关其他信息 - 
+            安全模式请参见主题6a。系统配置文件。
+
+
+       -H：线程模式操作
+            指示top显示单个线程。没有这个
+            命令行选项每个中所有线程的总和
+            过程显示。以后可以用'H'改变
+            互动命令。
+
+
+       -i：空闲进程切换
+            从最后记住的“i”状态开始逆转。什么时候
+            此切换为关闭，自此以后未使用任何CPU的任务
+            最后一次更新将不会显示。对于其他信息 - 
+            有关此切换的信息，请参阅主题4c。任务区域
+            mands，SIZE。
+
+
+       -n：迭代次数限制为：-n number
+            指定最大迭代次数或帧数top
+            应该在结束之前产生。
+
+
+       -o：覆盖排序字段为：-o fieldname
+            指定任务所在字段的名称
+            排序，独立于配置中反映的内容
+            文件。您也可以在字段名称前加上“+”或“ - ”
+            覆盖排序方向。领先的“+”将强制排序 - 
+            从高到低，而“ - ”将确保从低到高
+            排序。
+
+            此选项主要用于支持自动/脚本化
+            批处理模式操作。
+
+
+       -O：输出字段名称
+            此选项可作为上述-o选项的帮助形式。
+            它将导致top打印每个可用的字段名称
+            在另一条线上，然后退出。这些名字受nls的约束
+            翻译。
+
+
+       -p：Monitor-PIDs模式为：-pN1 -pN2 ...或-pN1，N2，N3 ......
+            仅监视具有指定进程ID的进程。这个
+            选项最多可以给20次，或者你可以提供一个
+            逗号分隔列表，最多包含20个pid。两者混合在一起
+            方法是允许的。
+
+            pid值为零将被视为的进程ID
+            顶级程序一旦运行就会自行运行。
+
+            这只是一个命令行选项，您应该这样做
+            恢复正常运行，没有必要退出
+            重新启动顶部 - 只需发出任何这些交互式
+            mands：`='，`u'或'U'。
+
+            “p”，“u”和“U”命令行选项是相互排斥的 - 
+            西伯。
+
+
+       -s：安全模式操作
+            强制安全模式启动，即使是root。这种模式
+            通过系统配置可以更好地控制
+            文件（参见主题6.文件）。
+
+
+       -S：累计时间切换
+            从最后记住的'S'状态开始逆转。什么时候
+            累积时间模式为On，每个进程都列出
+            它及其死去的孩子使用的cpu时间。见
+            `S'交互式命令有关的其他信息
+            这种模式。
+
+
+       -u | -U：用户过滤模式为：-u | -U号码或名称
+            仅显示具有用户标识或用户名匹配的进程
+            给定的。 `-u'选项与有效用户匹配
+            而`-U'选项匹配任何用户（真实，有效，
+            保存，或文件系统）。
+
+            将感叹号（'！'）添加到用户标识或名称
+            指示top仅显示用户不匹配的进程 - 
+            提供的那个。
+
+            “p”，“u”和“U”命令行选项是相互排斥的 - 
+            西伯。
+
+
+       -w：输出宽度覆盖为：-w [number]
+            在批处理模式下，使用时不带参数top将格式化
+            输出使用COLUMNS =和LINES =环境变量，
+            如果设置。否则，宽度将固定为最大值512
+            列。通过参数，输出宽度可以减小或
+            增加（最多512），但考虑行数
+            无限。
+
+            在正常显示模式下，使用时不带参数top
+            将尝试使用COLUMNS =和LINES =格式化输出
+            环境变量，如果设置。用一个参数，输出
+            宽度只能减少，不能增加。是否使用
+            环境变量或带-w的参数，不在时
+            永远不会超过批量模式实际端子尺寸。
+
+            注意：不使用此命令行选项，输出
+            宽度始终基于顶部所在的终端
+            是否在批处理模式下调用。
+
+
+2.摘要显示
+       以下三个区域中的每一个都是单独控制的
+       通过一个或多个交互式命令。见主题4b。摘要
+       区域命令有关这些条款的其他信息
+       sions。
+
+
+   2A。 UPTIME和LOAD平均值
+       这部分由一行包含：
+           程序或窗口名称，具体取决于显示模式
+           自上次启动以来的当前时间和时间长度
+           用户总数
+           系统在过去的1,5和15分钟内加载平均值
+
+
+   2B。任务和CPU状态
+       该部分至少包含两行。在SMP环境中
+       ronment，额外的行可以反映单个CPU状态
+       centages。
+
+       第1行显示总任务或线程，具体取决于状态
+       线程模式切换。该总数进一步分类为：
+           运行;睡眠;停止;僵尸
+
+       第2行显示基于自自的间隔以来的CPU状态百分比
+       最后刷新。
+
+       默认情况下，这些类别的百分比是
+       播放。下面显示了两个标签，最近的标签
+       首先显示内核版本。
+           我们，用户：时间运行不明智的用户进程
+           sy，system：运行内核进程的时间
+           ni，很好：时间运行niced用户进程
+           id，idle：在内核空闲处理程序中花费的时间
+           wa，IO-wait：等待I / O完成的时间
+           嗨：服务硬件中断的时间
+           si：服务软件中断所花费的时间
+           st：虚拟机管理程序从此虚拟机中窃取的时间
+
+       在备用cpu状态显示模式，超出第一个
+       任务/线程行，显示包含的缩写摘要
+       这些元素：
+                      A B C D
+           ％Cpu（s）：75.0 / 25.0 100 [...
+
+
+       其中：a）是我们和ni的百分比; b）是sy-per-
+       centage; c）总数;和d）是两个视觉图之一
+       那些陈述。见主题4b。摘要区域命令和
+       `t'命令用于获取有关该特殊4路的其他信息
+       切换。
+
+
+   2C。内存使用情况
+       该部分由两行组成，可以表示值
+       kibibytes（KiB）通过exbibytes（EiB）取决于缩放
+       使用“E”交互式命令强制执行的因子。
+
+       默认情况下，第1行反映物理内存，分类为：
+           total，free，used和buff / cache
+
+       第2行主要反映虚拟内存，分类为：
+           总，免费，使用和有效（这是物理内存）
+
+       第2行的可用数字是物理内存的估计
+       可用于启动新应用程序，无需交换。不像
+       在自由领域，它试图解释随时可回收
+       页面缓存和内存块。它可以在内核3.14上找到，
+       在内核2.6.27+上模拟，否则与免费相同。
+
+       在备用存储器显示模式中，有两个简短的摘要
+       显示由以下元素组成的行：
+                      a b c
+           GiB Mem：18.7 / 15.738 [...
+           GiB交换：0.0 / 7.999 [...
+
+       其中：a）是使用的百分比; b）是可用的总数;和
+       c）是这些表示的两个视觉图之一。
+
+       在物理内存的情况下，百分比代表
+       总减去上面提到的估计利用。 “Mem”图
+       本身在使用和任何剩余存储器之间划分，而不是其他 - 
+       有利可图。见主题4b。摘要区域命令
+       和'm'命令获取有关该特殊信息的其他信息
+       4向切换。
+
+       此表可能有助于解释显示的缩放值：
+           KiB = kibibyte = 1024字节
+           MiB = mebibyte = 1024 KiB = 1,048,576字节
+           GiB = gibibyte = 1024 MiB = 1,073,741,824字节
+           TiB = tebibyte = 1024 GiB = 1,099,511,627,776字节
+           PiB = pebibyte = 1024 TiB = 1,125,899,906,842,624字节
+           EiB = exbibyte = 1024 PiB = 1,152,921,504,606,846,976字节
+
+
+3.字段/列
+   3A。字段描述
+       下面列出了top的可用过程字段（列）。他们
+       以严格的ascii字母顺序显示。你可以自定义
+       他们的位置以及他们是否可以展示
+       `f'或`F'（字段管理）交互命令。
+
+       任何字段都可以选择作为排序字段，您可以控制是否
+       它们分为从高到低或从低到高。对于其他信息 - 
+       有关排序规定的信息，请参阅主题4c。任务区命令，SORT-
+       ING。
+
+       与物理内存或虚拟内存引用相关的字段
+       `（KiB）'是未填充的显示模式。这些领域可能，
+       但是，从KiB到PiB进行缩放。这种扩展影响了
+       通过“e”交互式命令或为启动而建立
+       通过构建选项。
+
+
+        1.％CPU  -  CPU使用率
+           任务占自上次屏幕以来经过的CPU时间的份额
+           更新，表示为总CPU时间的百分比。
+
+           在真正的SMP环境中，如果进程是多线程的，那么
+           top不在线程模式下运行，数量大于
+           可能会报告100％。你用'H'切换线程模式
+           互动命令。
+
+           此外，对于多处理器环境，如果Irix模式为Off，
+           top将在Solaris模式下运行，其中任务的cpu使用率将是
+           除以CPU的总数。你切换
+           使用“I”交互式命令的Irix / Solaris模式。
+
+
+        2.％MEM  - 内存使用量（RES）
+           任务当前使用的可用物理内存份额。
+
+
+        3. CGROUPS  - 控制组
+           进程所属的控制组的名称，
+           或“ - ”如果不适用于该过程。
+
+           控制组提供分配资源（cpu，内存，
+           安装定义的组之间的网络带宽等
+           流程。它们可以对分配进行细粒度控制，
+           否认，优先排序，管理和监控这些
+           资源。
+
+           cgroup的许多不同层次结构可以同时存在
+           在一个系统上，每个层次结构都连接到一个或多个子系统
+           系统。子系统表示单个资源。
+
+           注意：与大多数列不同，CGROUPS字段不固定 - 
+           宽度。显示时，它加上任何其他可变宽度col-
+           umns将被分配所有剩余的屏幕宽度（最多为
+           最多512个字符）。即便如此，这样的可变宽度字段
+           仍然可能遭受截断。见主题5c。滚动赢 - 
+           dow有关访问任何截断的其他信息
+           数据。
+
+
+        4.代码 - 代码大小（KiB）
+           专用于可执行代码的物理内存量也是如此
+           称为文本驻留集大小或TRS。
+
+
+        5.命令 - 命令名称或命令行
+           显示用于启动任务的命令行或名称
+           相关的计划。您在命令行和。之间切换
+           使用`c'命名，这是一个命令行选项和一个
+           互动命令。
+
+           当您选择显示命令行时，没有
+           命令行（如内核线程）将仅显示
+           括号中的程序名称，如下例所示：
+               [kthreadd]
+
+           此字段也可能受到林视图显示的影响
+           模式。有关其他信息，请参阅“V”交互式命令 - 
+           关于该模式的。
+
+           注意：与大多数列不同，COMMAND字段不是固定的 - 
+           宽度。显示时，它加上任何其他可变宽度col-
+           umns将被分配所有剩余的屏幕宽度（最多为
+           最多512个字符）。即便如此，这样的可变宽度字段
+           仍然可能遭受截断。这尤其适用
+           显示命令行时的此字段（`c'
+           交互式命令。）参见主题5c。滚动一个窗口
+           有关访问任何截断数据的其他信息。
+
+
+        6.数据 - 数据+堆栈大小（KiB）
+           专用于可执行文件以外的物理内存量
+           代码，也称为数据驻留集大小或DRS。
+
+
+        7. ENVIRON  - 环境变量
+           显示所有环境变量（如果有），如下所示
+           各自的过程。将显示这些变量
+           在他们的原始本地订单中，而不是您指定的排序顺序 - 
+           用不合格的“套装”来看待。
+
+           注意：与大多数列不同，ENVIRON字段不是固定的 - 
+           宽度。显示时，它加上任何其他可变宽度col-
+           umns将被分配所有剩余的屏幕宽度（最多为
+           最多512个字符）。即便如此，这样的可变宽度字段
+           仍然可能遭受截断。这尤其适用
+           这个领域。见主题5c。滚动窗口以获取更多信息
+           有关访问任何截断数据的信息。
+
+
+        8.标志 - 任务标志
+           此列表示任务的当前调度标志
+           以十六进制表示法和零表示
+           抑制。这些标志正式记录在案
+           在<linux / sched.h中>。
+
+
+        9. GID  - 组ID
+           有效的组ID。
+
+
+       10. GROUP  - 组名
+           有效的组名。
+
+
+       11. NI  - 很好的价值
+           任务的好价值。否定的好价值意味着
+           更高的优先级，而积极的好的价值意味着更低
+           优先。该领域的零只意味着优先权不会
+           在确定任务的调度能力时进行调整。
+
+
+       12. P  - 上次使用的CPU（SMP）
+           表示上次使用的处理器的数字。在真正的SMP中
+           自从ker-以来，这可能会经常发生变化
+           nel故意使用弱亲和力。而且，这是非常的行为
+           跑步可能打破这种弱亲和力并导致更多亲
+           cesses更频繁地改变CPU（因为额外的需求）
+           为cpu时间）。
+
+
+       13. PGRP  - 进程组ID
+           每个进程都是一个独特进程组的成员
+           用于信号分配和终端仲裁
+           请求他们的输入和输出。当一个过程创建时
+           ated（forked），它成为其进程组的成员
+           家长。按照惯例，此值等于进程ID（请参阅
+           PID）进程组的第一个成员，称为
+           流程组组长。
+
+
+       14. PID  - 进程ID
+           但是，任务的唯一进程ID会定期包装
+           从不重启零。在内核方面，它是一个派遣 - 
+           由task_struct定义的实体。
+
+           该值也可以用作：进程组ID（参见PGRP）;
+           会话负责人的会话ID（参见SID）;一个线程组
+           线程组组长的ID（参见TGID）;和TTY过程
+           流程组负责人的组ID（请参阅TPGID）。
+
+
+       15. PPID  - 父进程ID
+           任务父级的进程ID（pid）。
+
+
+       16. PR  - 优先权
+           任务的调度优先级。如果你在这里看到`rt'
+           字段，表示任务在实时调度下运行
+           优先。
+
+           在linux下，实时优先级有点误导
+           传统上，运营本身并不是优先考虑的。和
+           虽然2.6内核可以主要是可抢占的，但事实并非如此
+           总是如此。
+
+
+       17. RES  - 驻留内存大小（KiB）
+           任务正在使用的非交换物理内存。
+
+
+       18. RUID  - 真实用户ID
+           真实的用户ID。
+
+
+       19. RUSER  - 真实用户名
+           真实的用户名。
+
+
+       20. S  - 过程状态
+           任务的状态可以是以下之一：
+               D =不间断的睡眠
+               R =跑步
+               S =睡觉
+               T =由作业控制信号停止
+               t =在跟踪期间由调试器停止
+               Z =僵尸
+
+           显示为正在运行的任务应该更恰当地被认为是
+           准备好运行 - 他们的task_struct只是代表
+           Linux运行队列。即使没有真正的SMP机器，您也可以
+           根据顶部的延迟，看到这种状态下的众多任务
+           间隔和好的价值。
+
+
+       21. SHR  - 共享内存大小（KiB）
+           任务可用的共享内存量，而不是全部
+           这通常是居民。它只是反映了记忆
+           可能可能与其他进程共享。
+
+
+       22. SID  - 会话ID
+           会话是进程组的集合（参见PGRP），usu-
+           由登录shell建立的盟友。一个新分叉的过程
+           加入其创建者的会话。按惯例，这个值
+           等于第一个成员的进程ID（参见PID）
+           会话，称为会话领导者，通常是登录
+           贝壳。
+
+
+       23. SUID  - 保存的用户ID
+           保存的用户ID。
+
+
+       24. SUPGIDS  - 补充组ID
+           在登录时建立的任何补充组的ID
+           从任务的父级继承而来。它们以逗号显示
+           分隔列表。
+
+           注意：SUPGIDS字段与大多数列不同，不是固定的 - 
+           宽度。显示时，它加上任何其他可变宽度col-
+           umns将被分配所有剩余的屏幕宽度（最多为
+           最多512个字符）。即便如此，这样的可变宽度字段
+           仍然可能遭受截断。见主题5c。滚动赢 - 
+           dow有关访问任何截断的其他信息
+           数据。
+
+
+       25. SUPGRPS  - 补充组名
+           登录时建立的任何补充组的名称
+           或者从任务的父级继承。它们显示在一个
+           逗号分隔列表。
+
+           注意：与大多数列不同，SUPGRPS字段不固定 - 
+           宽度。显示时，它加上任何其他可变宽度col-
+           umns将被分配所有剩余的屏幕宽度（最多为
+           最多512个字符）。即便如此，这样的可变宽度字段
+           仍然可能遭受截断。见主题5c。滚动赢 - 
+           dow有关访问任何截断的其他信息
+           数据。
+
+
+       26. SUSER  - 保存的用户名
+           保存的用户名。
+
+
+       27. SWAP  - 交换尺寸（KiB）
+           任务地址空间的非驻留部分。
+
+
+       28. TGID  - 线程组ID
+           任务所属的线程组的ID。它是
+           线程组组长的PID。在内核方面，它代表 - 
+           看到那些共享mm_struct的任务。
+
+
+       29. TIME  -  CPU时间
+           任务自启动以来使用的总CPU时间。当Cumu-
+           lative模式为On，每个进程都列出了cpu时间
+           它及其死去的孩子已经使用过了。你切换累积量 - 
+           带有'S'的tive模式，它既是命令行选项又是
+           互动命令。请参阅`S'交互式命令
+           有关此模式的其他信息。
+
+
+       30. TIME +  -  CPU时间，百分之一秒
+           与TIME相同，但通过数量反映更多粒度
+           dredths一秒钟。
+
+
+       31. TPGID  -  Tty Process Group Id
+           CON的前台进程的进程组ID
+           如果进程未连接到终端，则为tty，或-1。
+           按照惯例，该值等于进程ID（参见PID）
+           流程组负责人（参见PGRP）。
+
+
+       32. TTY  - 控制Tty
+           控制终端的名称。这通常是
+           进程所在的设备（串口，pty等）
+           开始，它用于输入或输出。但是，一个
+           在这种情况下，任务不需要与终端相关联
+           你会看到`？'显示。
+
+
+       33. UID  - 用户ID
+           任务所有者的有效用户ID。
+
+
+       34.已使用 - 使用中的内存（KiB）
+           该字段表示任务的非交换物理内存
+           已使用（RES）加上其地址的非常驻部分
+           空间（SWAP）。
+
+
+       35. USER  - 用户名
+           任务所有者的有效用户名。
+
+
+       36. VIRT  - 虚拟内存大小（KiB）
+           任务使用的虚拟内存总量。它
+           包括所有代码，数据和共享库以及那些页面
+           已被换出和已映射但未映射的页面
+           用过的。
+
+
+       37. WCHAN  - 睡在功能上
+           取决于内核链接映射的可用性（系统 - 
+           tem.map），此字段将显示该名称或地址
+           任务当前正在休眠的内核函数。跑-
+           ning任务将在此列中显示短划线（' - '）。
+
+           通过显示此字段，top的自己的工作集可能是
+           增加了超过700Kb，具体取决于内核版本。
+           如果发生这种情况，您只能减少开销
+           将停止并重新启动顶部。
+
+
+       38. nDRT  - 脏页数
+           自上次以来已修改的页数
+           最后写到辅助存储。脏页必须写 - 
+           十，以相应的物理辅助存储
+           内存位置可用于其他一些虚拟页面。
+
+
+       39. nMaj  - 主要页面错误计数
+           任务发生的主要页面错误数。
+           当进程尝试从或读取时发生页面错误
+           写入当前不存在的虚拟页面
+           地址空间。主要页面错误是辅助存储
+           访问涉及使该页面可用。
+
+
+       40. nMin  - 次要页面错误计数
+           任务发生的次要页面错误的数量。
+           当进程尝试从或读取时发生页面错误
+           写入当前不存在的虚拟页面
+           地址空间。次要页面错误不涉及辅助
+           使该页面可用的存储访问权限。
+
+
+       41. nTH  - 线程数
+           与进程关联的线程数。
+
+
+       42. nsIPC  -  IPC命名空间
+           用于隔离进程间通信的命名空间的Inode
+           资源（IPC）资源，如System V IPC对象和
+           POSIX消息队列。
+
+
+       43. nsMNT  -  MNT名称空间
+           用于隔离文件系统挂载的命名空间的Inode
+           因此提供了文件系统层次结构的不同视图 - 
+           CHY。
+
+
+       44. nsNET  -  NET命名空间
+           命名空间的Inode用于隔离资源，例如
+           网络设备，IP地址，IP路由，端口号等
+
+
+       45. nsPID  -  PID命名空间
+           命名空间的Inode用于隔离进程ID号
+           意味着他们不需要保持独特。因此，每个这样的名字 - 
+           步伐可以有自己的'init'（PID＃1）来管理各种ini
+           tialization任务和收获孤儿子进程。
+
+
+       46. nsUSER  -  USER命名空间
+           命名空间的Inode用于隔离用户和组
+           身份证号码。因此，一个过程可能具有正常的非特权
+           用户ID为0时，用户名称空间外的用户ID，
+           具有完全root权限，位于该命名空间内。
+
+
+       47. nsUTS  -  UTS命名空间
+           用于隔离主机名和NIS的命名空间的Inode
+           域名。 UTS仅仅意味着“UNIX分时系统”。
+
+
+       48. vMj  - 主要页面错误计数Delta
+           自从以来发生的主要页面错误的数量
+           最后更新（见nMaj）。
+
+
+       49. vMn  - 次要页面错误计数Delta
+           自从以来发生的次要页面错误的数量
+           最后更新（见nMin）。
+
+
+
+   3B。管理领域
+       按下交互式命令“f”或“F”后（字段管理 - 
+       你会看到一个屏幕显示：1）`cur-
+       租'窗口名; 2）指定的排序字段; 3）所有领域
+       他们目前的顺序以及描述。标有的条目
+       星号是当前显示的字段，屏幕宽度为
+       mitting。
+
+
+           ·如屏幕上​​的说明所示，您可以在其中导航
+              带有向上和向下箭头键的字段。 PgUp，
+              PgDn，Home和End键也可用于快速到达
+              第一个或最后一个可用字段。
+
+
+           ·右箭头键选择一个用于重新定位的字段
+              左箭头键或<Enter>键提交该字段
+              放置。
+
+
+           ·“d”键或<Space>栏切换字段的显示
+              状态，因此是否存在星号。
+
+
+           ·`s'键将字段指定为排序字段。看到
+              主题4c。任务区域命令，分类附加信息 - 
+              有关您选择排序字段的信息。
+
+
+           ·“a”和“w”键可用于循环所有键
+              可用的窗口和`q'或<Esc>键退出字段
+              管理。
+
+
+       字段管理屏幕也可用于更改`cur-
+       以全屏模式或更改方式租用'窗口/字段组
+       nate-display模式。无论什么是“q”或<Esc>时的目标
+       当您返回顶部显示屏时，按下将变为当前状态。
+       参见主题5. ALTERNATE-DISPLAY规定和'g'互动
+       用于洞察“当前”窗口和字段组的命令。
+
+
+       注意：任何已水平滚动的窗口都将被重置
+       如果通过“字段管理”屏幕进行任何字段更改。
+       但是，任何垂直滚动位置都不会受到影响。
+       见主题5c。滚动窗口以获取更多信息
+       关于垂直和水平滚动。
+
+
+4.交互命令
+       下面列出了类别中命令的简要索引。一些
+       命令不止一次出现 - 它们的含义或范围可能
+       取决于发布它们的上下文。
+
+         4A。全局命令
+               <Ent / Sp>？，=，0，
+               A, B, d, E, e, g, h, H, I, k, q, r, s, W, X, Y, Z
+         4b. Summary-Area-Commands
+               C, l, t, m, 1, 2, 3
+         4c. Task-Area-Commands
+               Appearance:  b, J, j, x, y, z
+               Content:     c, f, F, o, O, S, u, U, V
+               Size:        #, i, n
+               Sorting:     <, >, f, F, R
+         4d. Color-Mapping
+               <Ret>, a, B, b, H, M, q, S, T, w, z, 0 - 7
+         5b. Commands-for-Windows
+               -, _, =, +, A, a, g, G, w
+         5c. Scrolling-a-Window
+               C, Up, Dn, Left, Right, PgUp, PgDn, Home, End
+         5d. Searching-in-a-Window
+               L, &
+
+
+   4a. GLOBAL Commands
+       The  global  interactive  commands  are  always  available in both
+       full-screen mode and alternate-display  mode.   However,  some  of
+       these  interactive  commands  are  not  available  when running in
+       Secure mode.
+
+       If you wish to know in advance whether or not your  top  has  been
+       secured,  simply  ask  for help and view the system summary on the
+       second line.
+
+
+         <Enter> or <Space>  :Refresh-Display
+              These commands awaken top  and  following  receipt  of  any
+              input  the  entire  display  will  be repainted.  They also
+              force an update of any hotplugged cpu  or  physical  memory
+              changes.
+
+              Use either of these keys if you have a large delay interval
+              and wish to see current status,
+
+
+          ？ | h  :Help
+              There are two help levels available.  The first  will  pro‐
+              vide  a reminder of all the basic interactive commands.如果
+              top is secured, that screen will be abbreviated.
+
+              Typing `h' or `?' on that help screen will take you to help
+              for those interactive commands applicable to alternate-dis‐
+              play mode.
+
+
+          =  :Exit-Task-Limits
+              Removes restrictions on which tasks are shown.   This  com‐
+              mand  will reverse any `i' (idle tasks) and `n' (max tasks)
+              commands that might be active.  It  also  provides  for  an
+              exit  from PID monitoring, User filtering and Other filter‐
+              ING。 See the `-p' command-line option for a discussion  of
+              PID  monitoring,  the  `U'  or `u' interactive commands for
+              User filtering and the `O' or `o' interactive commands  for
+              Other filtering.
+
+              Additionally,  any  window  that  has been scrolled will be
+              reset with this command.  See topic 5c. SCROLLING a  Window
+              for  additional information regarding vertical and horizon‐
+              tal scrolling.
+
+              When operating in alternate-display mode this command has a
+              broader meaning.
+
+
+          0  :Zero-Suppress toggle
+              This  command  determines  whether  zeros are shown or sup‐
+              pressed for many of the fields in a  task  window.   Fields
+              like UID, GID, NI, PR or P are not affected by this toggle.
+
+
+          A  :Alternate-Display-Mode toggle
+              This  command  will  switch  between  full-screen  mode and
+              alternate-display mode.   See  topic  5.  ALTERNATE-DISPLAY
+              Provisions and the `g' interactive command for insight into
+              `current' windows and field groups.
+
+
+          B  :Bold-Disable/Enable toggle
+              This command will influence use of the bold terminfo  capa‐
+              bility  and  alters both the summary area and task area for
+              the `current' window.  While it is intended  primarily  for
+              use with dumb terminals, it can be applied anytime.
+
+              Note:  When this toggle is On and top is operating in mono‐
+              chrome mode, the entire display will appear as normal text.
+              Thus,  unless  the `x' and/or `y' toggles are using reverse
+              for emphasis, there will be  no  visual  confirmation  that
+              they are even on.
+
+
+       *  d | s  :Change-Delay-Time-interval
+              You  will  be prompted to enter the delay time, in seconds,
+              between display updates.
+
+              Fractional seconds are honored, but a  negative  number  is
+              not   allowed.    Entering  0  causes  (nearly)  continuous
+              updates, with an unsatisfactory display as the  system  and
+              tty  driver  try  to keep up with top's demands.  The delay
+              value is inversely proportional to system loading,  so  set
+              it with care.
+
+              If  at  any  time  you wish to know the current delay time,
+              simply ask for help and view the system summary on the sec‐
+              ond line.
+
+
+          E  :Extend-Memory-Scale in Summary Area
+              With  this command you can cycle through the available sum‐
+              mary area memory scaling which ranges from  KiB  (kibibytes
+              or    1,024    bytes)    through    EiB    (exbibytes    or
+              1,152,921,504,606,846,976 bytes).
+
+              If you see a `+' between a displayed number and the follow‐
+              ing  label,  it  means that top was forced to truncate some
+              portion of that number.  By  raising  the  scaling  factor,
+              such truncation can be avoided.
+
+
+          e  :Extend-Memory-Scale in Task Windows
+              With  this command you can cycle through the available task
+              window memory scaling which ranges from KiB  (kibibytes  or
+              1,024      bytes)     through     PiB     (pebibytes     or
+              1,125,899,906,842,624 bytes).
+
+              While top will try to  honor  the  selected  target  range,
+              additional  scaling  might  still  be necessary in order to
+              accommodate current values.  If you  wish  to  see  a  more
+              homogeneous result in the memory columns, raising the scal‐
+              ing range will usually accomplish that  goal.   Raising  it
+              too  high, however, is likely to produce an all zero result
+              which cannot be suppressed with the  `0'  interactive  com‐
+              mand.
+
+
+          g  :Choose-Another-Window/Field-Group
+              You will be prompted to enter a number between 1 and 4 des‐
+              ignating the field group which should be made the `current'
+              window.   You  will soon grow comfortable with these 4 win‐
+              dows, especially after experimenting with alternate-display
+              mode.
+
+
+          H  :Threads-mode toggle
+              When  this  toggle  is  On, individual threads will be dis‐
+              played for all processes in all visible task windows.  Oth‐
+              erwise,  top  displays  a  summation of all threads in each
+              处理。
+
+
+          I  :Irix/Solaris-Mode toggle
+              When operating in Solaris mode (`I' toggled Off), a  task's
+              cpu  usage  will  be  divided  by the total number of CPUs.
+              After issuing this command, you'll be told the new state of
+              this toggle.
+
+
+       *  k  :Kill-a-task
+              You will be prompted for a PID and then the signal to send.
+
+              Entering no PID or a negative number will be interpreted as
+              the default shown in the prompt (the first task displayed).
+              A PID value of zero means the top program itself.
+
+              The default signal, as reflected in the prompt, is SIGTERM.
+              However, you can send any signal, via number or name.
+
+              If you wish to abort the kill process, do one of  the  fol‐
+              lowing depending on your progress:
+                  1) at the pid prompt, type an invalid number
+                  2) at the signal prompt, type 0 (or any invalid signal)
+                  3) at any prompt, type <Esc>
+
+
+          q  :Quit
+
+
+       *  r  :Renice-a-Task
+              You  will  be prompted for a PID and then the value to nice
+              it to.
+
+              Entering no PID or a negative number will be interpreted as
+              the default shown in the prompt (the first task displayed).
+              A PID value of zero means the top program itself.
+
+              A positive nice value will cause a process to  lose  prior‐
+              两者均。 Conversely,  a  negative  nice  value  will  cause a
+              process to be viewed more favorably by the  kernel.   As  a
+              general  rule,  ordinary  users  can only increase the nice
+              value and are prevented from lowering it.
+
+              If you wish to abort the renice process, do one of the fol‐
+              lowing depending on your progress:
+                  1) at the pid prompt, type an invalid number
+                  2) at the nice prompt, type <Enter> with no input
+                  3) at any prompt, type <Esc>
+
+
+          W  :Write-the-Configuration-File
+              This  will  save  all  of your options and toggles plus the
+              current display mode and delay time.  By issuing this  com‐
+              mand  just  before  quitting  top, you will be able restart
+              later in exactly that same state.
+
+
+          X  :Extra-Fixed-Width
+              Some fields are fixed width and  not  scalable.   As  such,
+              they  are subject to truncation which would be indicated by
+              a `+' in the last position.
+
+              This interactive command can be used to alter the widths of
+              the following fields:
+
+                  field  default    field  default    field  default
+                  GID       5       GROUP     8       WCHAN    10
+                  RUID      5       RUSER     8       nsIPC    10
+                  SUID      5       SUSER     8       nsMNT    10
+                  UID       5       USER      8       nsNET    10
+                                    TTY       8       nsPID    10
+                                                      nsUSER   10
+                                                      nsUTS    10
+
+              You  will  be  prompted  for  the amount to be added to the
+              default widths shown above.  Entering zero forces a  return
+              to those defaults.
+
+              If  you  enter  a  negative  number, top will automatically
+              increase the column size as needed until there is  no  more
+              truncated  data.  You can accelerate this process by reduc‐
+              ing the delay interval or holding down the <Space> bar.
+
+              Note: Whether explicitly or  automatically  increased,  the
+              widths  for  these  fields  are never decreased by top.至
+              narrow them you must specify a smaller  number  or  restore
+              the defaults.
+
+
+          Y  :Inspect-Other-Output
+              After  issuing  the  `Y'  interactive  command, you will be
+              prompted for a target PID.  Typing a value or accepting the
+              default  results  in a separate screen.  That screen can be
+              used to view a variety of files  or  piped  command  output
+              while the normal top iterative display is paused.
+
+              Note:  This interactive command is only fully realized when
+              supporting entries have been manually added to the  end  of
+              the  top configuration file.  For details on creating those
+              entries, see topic 6c. ADDING INSPECT Entries.
+
+              Most of the keys used to navigate the Inspect  feature  are
+              reflected  in  its  header  prologue.   There are, however,
+              additional keys available once you have selected a particu‐
+              lar  file  or command.  They are familiar to anyone who has
+              used the pager `less' and are summarized  here  for  future
+              reference.
+
+                  key      function
+                  =        alternate status-line, file or pipeline
+                  /        find, equivalent to `L' locate
+                  n        find next, equivalent to `&' locate next
+                  <Space>  scroll down, equivalent to <PgDn>
+                  b        scroll up, equivalent to <PgUp>
+                  g        first line, equivalent to <Home>
+                  G        last line, equivalent to <End>
+
+
+          Z  :Change-Color-Mapping
+              This  key  will take you to a separate screen where you can
+              change the colors for the `current' window, or for all win‐
+              dows.   For  details regarding this interactive command see
+              topic 4d. COLOR Mapping.
+
+
+       *  The commands shown with an asterisk (`*') are not available  in
+          Secure mode, nor will they be shown on the level-1 help screen.
+
+
+   4b. SUMMARY AREA Commands
+       The summary area interactive commands are always available in both
+       full-screen mode and  alternate-display  mode.   They  affect  the
+       beginning lines of your display and will determine the position of
+       messages and prompts.
+
+       These commands  always  impact  just  the  `current'  window/field
+       group.   See  topic  5.  ALTERNATE-DISPLAY  Provisions and the `g'
+       interactive command for insight into `current' windows  and  field
+       groups.
+
+
+          C  :Show-scroll-coordinates toggle
+              Toggle an informational message which is displayed whenever
+              the message line is not otherwise being  used.   For  addi‐
+              tional information see topic 5c. SCROLLING a Window.
+
+
+          l  :Load-Average/Uptime toggle
+              This is also the line containing the program name (possibly
+              an alias) when operating in full-screen mode or  the  `cur‐
+              rent' window name when operating in alternate-display mode.
+
+
+          t  :Task/Cpu-States toggle
+              This  command  affects  from  2 to many summary area lines,
+              depending on the state of the `1', `2' or `3' command  tog‐
+              gles and whether or not top is running under true SMP.
+
+              This  portion of the summary area is also influenced by the
+              `H' interactive command toggle, as reflected in  the  total
+              label which shows either Tasks or Threads.
+
+              This  command  serves  as  a  4-way toggle, cycling through
+              these modes:
+                  1. detailed percentages by category (default)
+                  2. abbreviated user/system and total % + bar graph
+                  3. abbreviated user/system and total % + block graph
+                  4. turn off task and cpu states display
+
+              When operating in either of the graphic modes, the  display
+              becomes  much  more meaningful when individual CPUs or NUMA
+              nodes are also displayed.  See the the  `1',  `2'  and  `3'
+              commands below for additional information.
+
+
+          m  :Memory/Swap-Usage toggle
+              This  command  affects  the  two summary area lines dealing
+              with physical and virtual memory.
+
+              This command serves as  a  4-way  toggle,  cycling  through
+              these modes:
+                  1. detailed percentages by memory type (default)
+                  2. abbreviated % used/total available + bar graph
+                  3. abbreviated % used/total available + block graph
+                  4. turn off memory display
+
+
+          1  :Single/Separate-Cpu-States toggle
+              This  command affects how the `t' command's Cpu States por‐
+              tion is shown.  Although this toggle  exists  primarily  to
+              serve massively-parallel SMP machines, it is not restricted
+              to solely SMP environments.
+
+              When you see `%Cpu(s):' in the summary area, the `1' toggle
+              is On and all cpu information is gathered in a single line.
+              Otherwise, each cpu is  displayed  separately  as:  `%Cpu0,
+              %Cpu1, ...'  up to available screen height.
+
+
+          2  :NUMA-Nodes/Cpu-Summary toggle
+              This  command  toggles  between the `1' command cpu summary
+              display (only) or a summary display plus the cpu usage sta‐
+              tistics for each NUMA Node.  It is only available if a sys‐
+              tem has the requisite NUMA support.
+
+
+          3  :Expand-NUMA-Node
+              You will be invited to enter a number representing  a  NUMA
+              Node.   Thereafter,  a node summary plus the statistics for
+              each cpu in that node will be shown until either the `1' or
+              `2' command toggle is pressed.  This interactive command is
+              only available if a system has the requisite NUMA support.
+
+
+       Note: If the entire summary area has been toggled Off for any win‐
+       dow,  you  would be left with just the message line.  In that way,
+       you will have maximized available task rows but (temporarily) sac‐
+       rificed the program name in full-screen mode or the `current' win‐
+       dow name when in alternate-display mode.
+
+
+   4c. TASK AREA Commands
+       The  task  area  interactive  commands  are  always  available  in
+       full-screen mode.
+
+       The  task  area interactive commands are never available in alter‐
+       nate-display mode if the `current' window's task display has  been
+       toggled Off (see topic 5. ALTERNATE-DISPLAY Provisions).
+
+
+       APPEARANCE of task window
+
+
+          J  :Justify-Numeric-Columns toggle
+              Alternates  between right-justified (the default) and left-
+              justified numeric data.  If  the  numeric  data  completely
+              fills  the available column, this command toggle may impact
+              the column header only.
+
+
+          j  :Justify-Character-Columns toggle
+              Alternates between left-justified (the default) and  right-
+              justified character data.  If the character data completely
+              fills the available column, this command toggle may  impact
+              the column header only.
+
+
+         The  following  commands will also be influenced by the state of
+         the global `B' (bold enable) toggle.
+
+
+          b  :Bold/Reverse toggle
+              This command will impact how the `x' and  `y'  toggles  are
+              显示。 It may also impact the summary area when a bar
+              graph has been selected for cpu states or memory usage  via
+              the 't' or 'm' toggles.
+
+
+          x  :Column-Highlight toggle
+              Changes  highlighting  for  the current sort field.  If you
+              forget which field is being sorted this command  can  serve
+              as  a  quick  visual  reminder, providing the sort field is
+              being displayed.  The  sort  field  might  not  be  visible
+              because:
+                  1) there is insufficient Screen Width
+                  2) the `f' interactive command turned it Off
+
+              Note:  Whenever  Searching and/or Other Filtering is active
+              in a window, column highlighting is  temporarily  disabled.
+              See  the  notes  at the end of topics 5d. SEARCHING and 5e.
+              FILTERING for an explanation why.
+
+
+          y  :Row-Highlight toggle
+              Changes highlighting for "running" tasks.   For  additional
+              insight into this task state, see topic 3a. DESCRIPTIONS of
+              Fields, the `S' field (Process Status).
+
+              Use of this provision provides important insight into  your
+              system's  health.   The only costs will be a few additional
+              tty escape sequences.
+
+
+          z  :Color/Monochrome toggle
+              Switches the `current' window between your last used  color
+              scheme  and  the  older form of black-on-white or white-on-
+              black.  This command will alter both the summary  area  and
+              task  area but does not affect the state of the `x', `y' or
+              `b' toggles.
+
+
+       CONTENT of task window
+
+
+          c  :Command-Line/Program-Name toggle
+              This command will be honored whether  or  not  the  COMMAND
+              column is currently visible.  Later, should that field come
+              into view, the change you applied will be seen.
+
+
+          f | F  :Fields-Management
+              These keys display a separate screen where you  can  change
+              which  fields are displayed, their order and also designate
+              the sort field.  For additional information on these inter‐
+              active commands see topic 3b. MANAGING Fields.
+
+
+          o | O  :Other-Filtering
+              You  will be prompted for the selection criteria which then
+              determines which tasks will be shown in the `current'  win‐
+              dow.   Your criteria can be made case sensitive or case can
+              be ignored.  And you determine if  top  should  include  or
+              exclude matching tasks.
+
+              See  topic  5e.  FILTERING in a window for details on these
+              and additional related interactive commands.
+
+
+          S  :Cumulative-Time-Mode toggle
+              When Cumulative mode is On, each process is listed with the
+              cpu time that it and its dead children have used.
+
+              When  Off, programs that fork into many separate tasks will
+              appear less demanding.  For programs like `init' or a shell
+              this is appropriate but for others, like compilers, perhaps
+              not.  Experiment with two task  windows  sharing  the  same
+              sort field but with different `S' states and see which rep‐
+              resentation you prefer.
+
+              After issuing this command, you'll be informed of  the  new
+              state  of  this  toggle.   If  you  wish to know in advance
+              whether or not Cumulative mode is in effect, simply ask for
+              help and view the window summary on the second line.
+
+
+          u | U  :Show-Specific-User-Only
+              You  will  be  prompted  for the uid or name of the user to
+              display.  The -u option matches on  effective user  whereas
+              the  -U option matches on any user (real, effective, saved,
+              or filesystem).
+
+              Thereafter, in that task window only matching users will be
+              shown,  or possibly no processes will be shown.  Prepending
+              an exclamation point ('!') to the user id or name instructs
+              top  to  display only processes with users not matching the
+              one provided.
+
+              Different task windows can  be  used  to  filter  different
+              users.   Later,  if  you wish to monitor all users again in
+              the `current' window, re-issue this command but just  press
+              <Enter> at the prompt.
+
+
+          V  :Forest-View-Mode toggle
+              In  this  mode,  processes are reordered according to their
+              parents and the layout of the COMMAND column resembles that
+              of  a  tree.   In  forest view mode it is still possible to
+              toggle between program name and command line (see  the  `c'
+              interactive  command) or between processes and threads (see
+              the `H' interactive command).
+
+              Note: Typing any key affecting the  sort  order  will  exit
+              forest  view  mode  in the `current' window.  See topic 4c.
+              TASK AREA Commands, SORTING for information on those keys.
+
+
+       SIZE of task window
+
+
+          i  :Idle-Process toggle
+              Displays all tasks or just active tasks.  When this  toggle
+              is  Off,  tasks  that  have not used any CPU since the last
+              update will not be displayed.  However, due to  the  granu‐
+              larity  of  the  %CPU  and TIME+ fields, some processes may
+              still be displayed that appear to have used no CPU.
+
+              If this command is applied to the last task display when in
+              alternate-display  mode,  then  it will not affect the win‐
+              dow's size, as all prior task displays  will  have  already
+              been painted.
+
+
+          n | #  :Set-Maximum-Tasks
+              You  will  be prompted to enter the number of tasks to dis‐
+              play.  The lessor of your number and available screen  rows
+              will be used.
+
+              When  used  in  alternate-display mode, this is the command
+              that gives you precise control over the size of  each  cur‐
+              rently  visible task display, except for the very last.它
+              will not affect the last window's size, as all  prior  task
+              displays will have already been painted.
+
+              Note:  If you wish to increase the size of the last visible
+              task  display  when  in  alternate-display   mode,   simply
+              decrease the size of the task display(s) above it.
+
+       SORTING of task window
+
+          For  compatibility,  this  top  supports most of the former top
+          sort keys.  Since this is primarily a  service  to  former  top
+          users, these commands do not appear on any help screen.
+                command   sorted-field                  supported
+                A         start time (non-display)      No
+                M         %MEM                          Yes
+                N         PID                           Yes
+                P         %CPU                          Yes
+                T         TIME+                         Yes
+
+          Before using any of the following sort provisions, top suggests
+          that you temporarily turn on column highlighting using the  `x'
+          interactive  command.   That  will  help ensure that the actual
+          sort environment matches your intent.
+
+          The following interactive commands will only  be  honored  when
+          the current sort field is visible.  The sort field might not be
+          visible because:
+                1) there is insufficient Screen Width
+                2) the `f' interactive command turned it Off
+
+
+             <  :Move-Sort-Field-Left
+                 Moves the sort column to the  left  unless  the  current
+                 sort field is the first field being displayed.
+
+
+             >  :Move-Sort-Field-Right
+                 Moves  the  sort  column to the right unless the current
+                 sort field is the last field being displayed.
+
+
+          The following  interactive  commands  will  always  be  honored
+          whether or not the current sort field is visible.
+
+
+             f | F  :Fields-Management
+                 These  keys  display  a  separate  screen  where you can
+                 change which field is used as  the  sort  column,  among
+                 other functions.  This can be a convenient way to simply
+                 verify the current sort field,  when  running  top  with
+                 column highlighting turned Off.
+
+
+             R  :Reverse/Normal-Sort-Field toggle
+                 Using this interactive command you can alternate between
+                 high-to-low and low-to-high sorts.
+
+
+          Note: Field sorting uses internal values, not those  in  column
+          display.   Thus,  the  TTY and WCHAN fields will violate strict
+          ASCII collating sequence.
+
+
+   4d. COLOR Mapping
+       When you issue the `Z' interactive command, you will be  presented
+       with  a  separate  screen.   That screen can be used to change the
+       colors in just the `current' window or in all four windows  before
+       returning to the top display.
+
+
+       The following interactive commands are available.
+           4 upper case letters to select a target
+           8 numbers to select a color
+           normal toggles available
+               B         :bold disable/enable
+               b         :running tasks "bold"/reverse
+               z         :color/mono
+           other commands available
+               a/w       :apply, then go to next/prior
+               <Enter>   :apply and exit
+               q         :abandon current changes and exit
+
+       If  you use `a' or `w' to cycle the targeted window, you will have
+       applied the color scheme that was displayed  when  you  left  that
+       window.  You can, of course, easily return to any window and reap‐
+       ply different colors or turn colors Off completely  with  the  `z'
+       toggle.
+
+       The  Color Mapping screen can also be used to change the `current'
+       window/field group in either full-screen mode or alternate-display
+       mode.   Whatever was targeted when `q' or <Enter> was pressed will
+       be made current as you return to the top display.
+
+5. ALTERNATE-DISPLAY Provisions
+   5a. WINDOWS Overview
+       Field Groups/Windows:
+          In full-screen mode there is a single window represented by the
+          entire screen.  That single window can still be changed to dis‐
+          play 1 of 4 different field groups  (see  the  `g'  interactive
+          command,  repeated  below).   Each  of the 4 field groups has a
+          unique separately configurable summary area and its own config‐
+          urable task area.
+
+          In  alternate-display mode, those 4 underlying field groups can
+          now be made visible simultaneously, or can be turned Off  indi‐
+          vidually at your command.
+
+          The  summary area will always exist, even if it's only the mes‐
+          sage line.  At any given time only one summary area can be dis‐
+          played.   However,  depending  on your commands, there could be
+          from zero to four separate task displays currently  showing  on
+          the screen.
+
+       Current Window:
+          The  `current' window is the window associated with the summary
+          area and the window to which task related commands  are  always
+          directed.   Since  in alternate-display mode you can toggle the
+          task display Off, some commands might  be  restricted  for  the
+          `current' window.
+
+          A  further  complication arises when you have toggled the first
+          summary area line Off.  With the loss of the window  name  (the
+          `l'  toggled  line),  you'll not easily know what window is the
+          `current' window.
+
+
+   5b. COMMANDS for Windows
+          - | _  :Show/Hide-Window(s) toggles
+              The `-' key turns the `current' window's  task  display  On
+              and  Off.   When  On, that task area will show a minimum of
+              the columns header you've established with the `f' interac‐
+              tive  command.   It  will  also reflect any other task area
+              options/toggles you've applied yielding zero or more tasks.
+
+              The `_' key does the same for all task displays.  In  other
+              words,  it switches between the currently visible task dis‐
+              play(s) and any task display(s) you had  toggled  Off.如果
+              all 4 task displays are currently visible, this interactive
+              command will leave the summary area  as  the  only  display
+              element.
+
+
+       *  = | +  :Equalize-(reinitialize)-Window(s)
+              The  `='  key forces the `current' window's task display to
+              be visible.  It also reverses any  `i'  (idle  tasks),  `n'
+              (max  tasks),  `u/U' (user filter) and `o/O' (other filter)
+              commands that might be active.  Also,  if  the  window  had
+              been  scrolled,  it  will  be reset with this command.  See
+              topic 5c. SCROLLING a  Window  for  additional  information
+              regarding vertical and horizontal scrolling.
+
+              The  `+'  key does the same for all windows.  The four task
+              displays will reappear, evenly balanced.   They  will  also
+              have   retained   any  customizations  you  had  previously
+              applied, except for the `i' (idle tasks), `n' (max  tasks),
+              `u/U'  (user  filter),  `o/O'  (other filter) and scrolling
+              interactive commands.
+
+
+       *  A  :Alternate-Display-Mode toggle
+              This command  will  switch  between  full-screen  mode  and
+              alternate-display mode.
+
+              The  first  time you issue this command, all four task dis‐
+              plays will be shown.  Thereafter when you switch modes, you
+              will  see  only  the  task display(s) you've chosen to make
+              visible.
+
+
+       *  a | w  :Next-Window-Forward/Backward
+              This will  change  the  `current'  window,  which  in  turn
+              changes  the  window to which commands are directed.  These
+              keys act in a circular fashion so you can reach any desired
+              window using either key.
+
+              Assuming  the  window name is visible (you have not toggled
+              `l' Off), whenever the  `current'  window  name  loses  its
+              emphasis/color,  that's  a reminder the task display is Off
+              and many commands will be restricted.
+
+
+       *  g  :Choose-Another-Window/Field-Group
+              You will be prompted to enter a number between 1 and 4 des‐
+              ignating the field group which should be made the `current'
+              window.
+
+              In full-screen mode, this command is necessary to alter the
+              `current'  window.  In alternate-display mode, it is simply
+              a less convenient alternative to the `a' and `w' commands.
+
+
+          G  :Change-Window/Field-Group-Name
+              You will be prompted for a new name to be  applied  to  the
+              `current' window.  It does not require that the window name
+              be visible (the `l' toggle to be On).
+
+
+       *  The interactive commands shown with an asterisk (`*') have  use
+          beyond alternate-display mode.
+              =, A, g    are always available
+              a, w       act the same with color mapping
+                         and fields management
+
+
+   5c. SCROLLING a Window
+       Typically  a  task window is a partial view into a systems's total
+       tasks/threads which shows only some of the  available  fields/col‐
+       umns.   With  these  scrolling keys, you can move that view verti‐
+       cally or horizontally to reveal any desired task or column.
+
+
+       Up,PgUp  :Scroll-Tasks
+           Move the view up toward the first task row,  until  the  first
+           task  is displayed at the top of the `current' window.  The Up
+           arrow key moves a single line while PgUp  scrolls  the  entire
+           window.
+
+
+       Down,PgDn  :Scroll-Tasks
+           Move  the  view  down toward the last task row, until the last
+           task is the only task displayed at the top  of  the  `current'
+           window.   The  Down  arrow  key moves a single line while PgDn
+           scrolls the entire window.
+
+
+       Left,Right  :Scroll-Columns
+           Move the view of displayable fields horizontally one column at
+           a time.
+
+           Note:  As  a reminder, some fields/columns are not fixed-width
+           but allocated all remaining screen width when  visible.什么时候
+           scrolling  right  or left, that feature may produce some unex‐
+           pected results initially.
+
+           Additionally, there are special provisions  for  any  variable
+           width field when positioned as the last displayed field.  Once
+           that field is reached via the right arrow key, and is thus the
+           only  column  shown,  you  can continue scrolling horizontally
+           within such a field.  See the `C'  interactive  command  below
+           for additional information.
+
+
+       Home  :Jump-to-Home-Position
+           Reposition the display to the un-scrolled coordinates.
+
+
+       End  :Jump-to-End-Position
+           Reposition  the  display so that the rightmost column reflects
+           the last displayable field and the bottom task row  represents
+           the last task.
+
+           Note:  From  this position it is still possible to scroll down
+           and right using the arrow keys.  This is true until  a  single
+           column and a single task is left as the only display element.
+
+
+       C  :Show-scroll-coordinates toggle
+           Toggle  an  informational  message which is displayed whenever
+           the message line is not otherwise being  used.   That  message
+           will take one of two forms depending on whether or not a vari‐
+           able width column has also been scrolled.
+
+             scroll coordinates: y = n/n (tasks), x = n/n (fields)
+             scroll coordinates: y = n/n (tasks), x = n/n (fields) + nn
+
+           The coordinates shown as n/n are relative to  the  upper  left
+           corner  of the `current' window.  The additional `+ nn' repre‐
+           sents the displacement into a variable width  column  when  it
+           has  been  scrolled horizontally.  Such displacement occurs in
+           normal 8 character tab stop amounts via  the  right  and  left
+           arrow keys.
+
+
+           y = n/n (tasks)
+               The  first  n  represents  the topmost visible task and is
+               controlled by scrolling keys.  The  second  n  is  updated
+               automatically to reflect total tasks.
+
+
+           x = n/n (fields)
+               The  first  n represents the leftmost displayed column and
+               is controlled by scrolling keys.   The  second  n  is  the
+               total number of displayable fields and is established with
+               the `f' interactive command.
+
+
+       The above interactive commands are always available in full-screen
+       mode  but  never  available in alternate-display mode if the `cur‐
+       rent' window's task display has been toggled Off.
+
+       Note: When any form of filtering is active, you  can  expect  some
+       slight aberrations when scrolling since not all tasks will be vis‐
+       ible.  This is particularly apparent when using the Up/Down  arrow
+       keys.
+
+
+   5d. SEARCHING in a Window
+       You  can  use these interactive commands to locate a task row con‐
+       taining a particular value.
+
+
+       L  :Locate-a-string
+           You will be prompted for the case-sensitive string  to  locate
+           starting  from  the  current window coordinates.  There are no
+           restrictions on search string content.
+
+           Searches are not limited to values from a single field or col‐
+           umn.  All of the values displayed in a task row are allowed in
+           a search string.  You may include spaces, numbers, symbols and
+           even forest view artwork.
+
+           Keying  <Enter> with no input will effectively disable the `&'
+           key until a new search string is entered.
+
+
+       &  :Locate-next
+           Assuming a  search  string  has  been  established,  top  will
+           attempt to locate the next occurrence.
+
+
+       When  a  match is found, the current window is repositioned verti‐
+       cally so the task row containing that string is first.  The scroll
+       coordinates  message  can  provide  confirmation  of such vertical
+       repositioning  (see  the  `C'  interactive  command).横
+       scrolling, however, is never altered via searching.
+
+       The  availability  of  a matching string will be influenced by the
+       following factors.
+
+          一个。 Which fields are displayable from the total available,
+             see topic 3b. MANAGING Fields.
+
+          b. Scrolling a window vertically and/or horizontally,
+             see topic 5c. SCROLLING a Window.
+
+          C。 The state of the command/command-line toggle,
+             see the `c' interactive command.
+
+          d。 The stability of the chosen sort column,
+             for example PID is good but %CPU bad.
+
+
+       If  a  search  fails,  restoring   the   `current'   window   home
+       (unscrolled) position, scrolling horizontally, displaying command-
+       lines or choosing a more stable sort field  could  yet  produce  a
+       successful `&' search.
+
+       The above interactive commands are always available in full-screen
+       mode but never available in alternate-display mode  if  the  `cur‐
+       rent' window's task display has been toggled Off.
+
+       Note:  Whenever a Search is active in a window, top will turn col‐
+       umn highlighting Off to prevent false matches on internal non-dis‐
+       play  escape sequences.  Such highlighting will be restored when a
+       window's search string is empty.  See the `x' interactive  command
+       for additional information on sort column highlighting.
+
+
+   5e. FILTERING in a Window
+       You  can use this Other Filter feature to establish selection cri‐
+       teria which will then determine which tasks are shown in the `cur‐
+       rent' window.
+
+       Establishing  a  filter requires: 1) a field name; 2) an operator;
+       and 3) a selection value, as a minimum.  This is the most  complex
+       of top's user input requirements so, when you make a mistake, com‐
+       mand recall will be your friend.  Remember the Up/Down arrow  keys
+       or their aliases when prompted for input.
+
+       Filter Basics
+
+          1. field names are case sensitive and spelled as in the header
+
+          2. selection values need not comprise the full displayed field
+
+          3. a selection is either case insensitive or sensitive to case
+
+          4. the default is inclusion, prepending `!' denotes exclusions
+
+          5. multiple selection criteria can be applied to a task window
+
+          6. inclusion and exclusion criteria can be used simultaneously
+
+          7. the 1 equality and 2 relational filters can be freely mixed
+
+          8. separate unique filters are maintained for each task window
+
+          If  a  field is not turned on or is not currently in view, then
+          your selection criteria will not affect  the  display.   Later,
+          should  a filtered field become visible, the selection criteria
+          will then be applied.
+
+       Keyboard Summary
+
+         o  :Other-Filter (lower case)
+             You will be prompted to establish a filter that ignores case
+             when matching.
+
+
+         O  :Other-Filter (upper case)
+             You will be prompted to establish a case sensitive filter.
+
+
+        ^O  :Show-Active-Filters (Ctrl key + `o')
+             This  can serve as a reminder of which filters are active in
+             the `current' window.  A summary will be shown on  the  mes‐
+             sage line until you press the <Enter> key.
+
+
+         =  :Reset-Filtering in current window
+             This  clears all of your selection criteria in the `current'
+             window.  It also has additional impact so please  see  topic
+             4a. GLOBAL Commands.
+
+
+         +  :Reset-Filtering in all windows
+             This  clears the selection criteria in all windows, assuming
+             you are in alternate-display mode.  As with the `=' interac‐
+             tive  command,  it  too  has  additional consequences so you
+             might wish to see topic 5b. COMMANDS for Windows.
+
+       Input Requirements
+
+          When prompted for selection criteria, the data you provide must
+          take one of two forms.  There are 3 required pieces of informa‐
+          tion, with a 4th as optional.  These examples  use  spaces  for
+          clarity but your input generally would not.
+                  #1           #2  #3              ( required )
+                  Field-Name   ?   include-if-value
+               ！ Field-Name   ? exclude-if-value
+               #4                                  ( optional )
+
+          Items #1, #3 and #4 should be self-explanatory.  Item #2 repre‐
+          sents both a required delimiter and the operator which must  be
+          one of either equality (`=') or relation (`<' or `>').
+
+          The  `='  equality  operator  requires only a partial match and
+          that can reduce your `if-value' input requirements.  The `>' or
+          `<' relational operators always employ string comparisons, even
+          with numeric fields.  They are designed to work with a  field's
+          default  justification  and  with  homogeneous data.  When some
+          field's numeric amounts have been subjected  to  scaling  while
+          others have not, that data is no longer homogeneous.
+
+          If  you  establish a relational filter and you have changed the
+          default Numeric or  Character  justification,  that  filter  is
+          likely  to fail.  When a relational filter is applied to a mem‐
+          ory field and you have not changed the scaling, it may  produce
+          misleading   results.    This  happens,  for  example,  because
+          `100.0m' (MiB) would appear greater than  `1.000g'  (GiB)  when
+          compared as strings.
+
+          If your filtered results appear suspect, simply altering justi‐
+          fication or scaling may yet achieve the desired objective.  See
+          the `j', `J' and `e' interactive commands for additional infor‐
+          mation.
+
+       Potential Problems
+
+          These GROUP filters could produce the exact same results or the
+          second one might not display anything at all, just a blank task
+          window.
+               GROUP=root        ( only the same results when )
+               GROUP=ROOT        ( invoked via lower case `o' )
+
+          Either of these RES filters  might  yield  inconsistent  and/or
+          misleading  results,  depending  on  the current memory scaling
+          factor.  Or both filters could produce the exact same results.
+               RES>9999          ( only the same results when )
+               !RES<10000        ( memory scaling is at `KiB' )
+
+          This nMin filter  illustrates  a  problem  unique  to  scalable
+          fields.   This particular field can display a maximum of 4 dig‐
+          its, beyond which values are automatically  scaled  to  KiB  or
+          above.   So  while  amounts  greater than 9999 exist, they will
+          appear as 2.6m, 197k, etc.
+               nMin>9999         ( always a blank task window )
+
+       Potential Solutions
+
+          These examples illustrate how Other Filtering can be creatively
+          applied  to  achieve  almost any desired result.单引号
+          are sometimes shown to delimit the spaces which are part  of  a
+          filter  or  to  represent a request for status (^O) accurately.
+          But if you used them with if-values in real  life,  no  matches
+          would be found.
+
+          Assuming  field  nTH is displayed, the first filter will result
+          in only multi-threaded processes being shown.  It also  reminds
+          us that a trailing space is part of every displayed field.该
+          second filter achieves the exact same results with less typing.
+               !nTH=` 1 '                ( ' for clarity only )
+               nTH>1                     ( same with less i/p )
+
+          With Forest View mode active and the COMMAND  column  in  view,
+          this  filter effectively collapses child processes so that just
+          3 levels are shown.
+               !COMMAND=`       `- '     ( ' for clarity only )
+
+          The final two filters appear  as  in  response  to  the  status
+          request  key (^O).  In reality, each filter would have required
+          separate input.  The PR example shows the two  concurrent  fil‐
+          ters  necessary to display tasks with priorities of 20 or more,
+          since some might be negative.  Then by exploiting trailing spa‐
+          ces, the nMin series of filters could achieve the failed `9999'
+          objective discussed above.
+               `PR>20' + `!PR=-'         ( 2 for right result )
+               `!nMin=0 ' + `!nMin=1 ' + `!nMin=2 ' + `!nMin=3 ' ...
+
+       Note: Whenever Other Filtering is active in  a  window,  top  will
+       turn  column highlighting Off to prevent false matches on internal
+       non-display escape sequences.  Such highlighting will be  restored
+       when  a  window  is  no  longer subject to filtering.  See the `x'
+       interactive command for  additional  information  on  sort  column
+       highlighting.
+
+
+6. FILES
+   6a. SYSTEM Configuration File
+       The presence of this file will influence which version of the help
+       screen is shown to an ordinary user.  More  importantly,  it  will
+       limit  what  ordinary users are allowed to do when top is running.
+       They will not be able to issue the following commands.
+           k        Kill a task
+           r        Renice a task
+           d or s   Change delay/sleep interval
+
+       The system configuration file is not created by top.  Rather,  you
+       create this file manually and place it in the /etc directory.  Its
+       name must be `toprc' and must have no leading  `.' (period).它
+       must have only two lines.
+
+       Here is an example of the contents of /etc/toprc:
+           s        # line 1: secure mode switch
+           5.0      # line 2: delay interval in seconds
+
+
+   6b. PERSONAL Configuration File
+       This  file is written as `$HOME/.your-name-4-top' + `rc'.使用
+       `W' interactive command to create it or update it.
+
+       Here is the general layout:
+           global   # line  1: the program name/alias notation
+             "      # line  2: id,altscr,irixps,delay,curwin
+           per ea   # line  a: winname,fieldscur
+           window   # line  b: winflags,sortindx,maxtasks,graph modes
+             "      # line  c: summclr,msgsclr,headclr,taskclr
+           global   # line 15: additional miscellaneous settings
+             "      # any remaining lines are devoted to the
+             "      # generalized inspect provisions
+             "      # discussed below
+
+       If the $HOME variable is not present, top will try  to  write  the
+       personal  configuration  file to the current directory, subject to
+       permissions.
+
+
+   6c. ADDING INSPECT Entries
+       To exploit the `Y' interactive command, you must  add  entries  at
+       the end of the top personal configuration file.  Such entries sim‐
+       ply reflect a file to be read or command/pipeline to  be  executed
+       whose  results  will  then  be displayed in a separate scrollable,
+       searchable window.
+
+       If you don't know the location or name of your top rcfile, use the
+       `W' interactive command to rewrite it and note those details.
+
+       Inspect  entries can be added with a redirected echo or by editing
+       the configuration file.  Redirecting an echo risks overwriting the
+       rcfile should it replace (>) rather than append (>>) to that file.
+       Conversely, when using an editor care must be taken not to corrupt
+       existing  lines,  some  of  which will contain unprintable data or
+       unusual characters.
+
+       Those Inspect entries beginning with a `#' character are  ignored,
+       regardless  of content.  Otherwise they consist of the following 3
+       elements, each of which must be separated by a tab character (thus
+       2 `\t' total):
+
+         .type:  literal `file' or `pipe'
+         .name:  selection shown on the Inspect screen
+         .fmts:  string representing a path or command
+
+       The  two  types of Inspect entries are not interchangeable.  Those
+       designated `file' will be accessed using fopen and must  reference
+       a  single  file in the `.fmts' element.  Entries specifying `pipe'
+       will employ  popen,  their  `.fmts'  element  could  contain  many
+       pipelined commands and, none can be interactive.
+
+       If the file or pipeline represented in your `.fmts' deals with the
+       specific PID input or accepted  when  prompted,  then  the  format
+       string  must  also  contain  the `%d' specifier, as these examples
+       illustrate.
+
+         .fmts=  /proc/%d/numa_maps
+         .fmts=  lsof -P -p %d
+
+       For `pipe' type entries only, you may also wish to redirect stderr
+       to stdout for a more comprehensive result.  Thus the format string
+       becomes:
+
+         .fmts=  pmap -x %d 2>&1
+
+       Here are examples of both types of Inspect entries as  they  might
+       appear  in the rcfile.  The first entry will be ignored due to the
+       initial `#' character.  For clarity,  the  pseudo  tab  depictions
+       (^I)  are  surrounded  by an extra space but the actual tabs would
+       not be.
+
+         # pipe ^I Sockets ^I lsof -n -P -i 2>&1
+         pipe ^I Open Files ^I lsof -P -p %d 2>&1
+         file ^I NUMA Info ^I /proc/%d/numa_maps
+         pipe ^I Log ^I tail -n100 /var/log/syslog | sort -Mr
+
+       Except for the commented entry above,  these  next  examples  show
+       what  could  be  echoed  to  achieve similar results, assuming the
+       rcfile name was `.toprc'.  However, due to the embedded tab  char‐
+       acters,  each of these lines should be preceded by `/bin/echo -e',
+       not just a simple an `echo', to  enable  backslash  interpretation
+       regardless of which shell you use.
+
+         "pipe\tOpen Files\tlsof -P -p %d 2>&1" >> ~/.toprc
+         "file\tNUMA Info\t/proc/%d/numa_maps" >> ~/.toprc
+         "pipe\tLog\ttail -n200 /var/log/syslog | sort -Mr" >> ~/.toprc
+
+       Caution:  If  any  inspect  entry  you create produces output with
+       unprintable characters they will be displayed  in  either  the  ^C
+       notation or hexadecimal <FF> form, depending on their value.这个
+       applies to tab characters as well, which will show  as  `^I'.如果
+       you  want  a  truer  representation,  any  embedded tabs should be
+       expanded.
+
+         # next would have contained `\t' ...
+         # file ^I <your_name> ^I /proc/%d/status
+         # but this will eliminate embedded `\t' ...
+         pipe ^I <your_name> ^I cat /proc/%d/status | expand -
+
+       The above example takes what could have been a  `file'  entry  but
+       employs a `pipe' instead so as to expand the embedded tabs.
+
+       Note:  While  `pipe'  type entries have been discussed in terms of
+       pipelines and commands, there  is  nothing  to  prevent  you  from
+       including   shell  scripts  as  well.   Perhaps even newly created
+       scripts designed specifically for the `Y' interactive command.
+
+       Lastly, as the number of your Inspect entries grows over time, the
+       `Options:'  row  will  be truncated when screen width is exceeded.
+       That does not affect operation other than to make some  selections
+       invisible.
+
+       However,  if  some  choices are lost to truncation but you want to
+       see more options, there is an easy solution hinted at below.
+
+         Inspection Pause at pid ...
+         Use:  left/right then <Enter> ...
+         Options:  help  1  2  3  4  5  6  7  8  9  10  11 ...
+
+       The entries in the top rcfile would have a number for the  `.name'
+       element  and the `help' entry would identify a shell script you've
+       written explaining what those numbered selections  actually  mean.
+       In that way, many more choices can be made visible.
+
+
+7. STUPID TRICKS Sampler
+       Many  of  these  tricks  work  best when you give top a scheduling
+       boost.  So plan on starting him with a nice value of -10, assuming
+       you've got the authority.
+
+
+   7a. Kernel Magic
+       For these stupid tricks, top needs full-screen mode.
+
+
+       ·  The  user  interface,  through  prompts and help, intentionally
+          implies that the delay interval is limited to tenths of a  sec‐
+          ond.   However,  you're  free to set any desired delay.  If you
+          want to see Linux at his scheduling best, try a  delay  of  .09
+          seconds or less.
+
+          For this experiment, under x-windows open an xterm and maximize
+          it.  Then do the following:
+            。 provide a scheduling boost and tiny delay via:
+                nice -n -10 top -d.09
+            。 keep sorted column highlighting Off so as to
+              minimize path length
+            。 turn On reverse row highlighting for emphasis
+            。 try various sort columns (TIME/MEM work well),
+              and normal or reverse sorts to bring the most
+              active processes into view
+
+          What you'll see is a very busy Linux  doing  what  he's  always
+          done  for you, but there was no program available to illustrate
+          this.
+
+
+       ·  Under an xterm using `white-on-black' colors,  on  top's  Color
+          Mapping  screen  set  the  task color to black and be sure that
+          task highlighting is set to bold, not reverse.   Then  set  the
+          delay interval to around .3 seconds.
+
+          After bringing the most active processes into view, what you'll
+          see are the ghostly images of just the currently running tasks.
+
+
+       ·  Delete the existing rcfile, or create  a  new  symlink.开始
+          this  new  version  then  type `T' (a secret key, see topic 4c.
+          Task Area Commands, SORTING) followed by `W' and `q'.  Finally,
+          restart the program with -d0 (zero delay).
+
+          Your  display  will be refreshed at three times the rate of the
+          former top, a 300% speed advantage.  As  top  climbs  the  TIME
+          ladder,  be  as patient as you can while speculating on whether
+          or not top will ever reach the top.
+
+
+   7b. Bouncing Windows
+       For these stupid tricks, top needs alternate-display mode.
+
+
+       ·  With 3 or 4 task displays visible, pick any window  other  than
+          the last and turn idle processes Off using the `i' command tog‐
+          gle.  Depending on where you  applied  `i',  sometimes  several
+          task  displays  are  bouncing and sometimes it's like an accor‐
+          dion, as top tries his best to allocate space.
+
+
+       ·  Set each window's summary lines differently: one with no memory
+          ('m');  another with no states ('t'); maybe one with nothing at
+          all, just the message line.  Then hold  down  `a'  or  `w'  and
+          watch a variation on bouncing windows  --  hopping windows.
+
+
+       ·  Display all 4 windows and for each, in turn, set idle processes
+          to Off using the `i' command toggle.  You've just  entered  the
+          "extreme bounce" zone.
+
+
+   7c. The Big Bird Window
+       This stupid trick also requires alternate-display mode.
+
+
+       ·  Display all 4 windows and make sure that 1:Def is the `current'
+          window.  Then, keep increasing window size with the `n'  inter‐
+          active  command  until  all the other task displays are "pushed
+          out of the nest".
+
+          When they've all  been  displaced,  toggle  between  all  visi‐
+          ble/invisible  windows using the `_' command toggle.  Then pon‐
+          der this:
+             is top fibbing or telling honestly your imposed truth?
+
+
+   7d. The Ol' Switcheroo
+       This stupid trick works best without alternate-display mode, since
+       justification is active on a per window basis.
+
+
+       ·  Start  top  and  make  COMMAND the last (rightmost) column dis‐
+          played.  If necessary, use the `c' command  toggle  to  display
+          command  lines  and ensure that forest view mode is active with
+          the `V' command toggle.
+
+          Then use the up/down arrow keys to position the display so that
+          some  truncated command lines are shown (`+' in last position).
+          You may have to resize your xterm to produce truncation.
+
+          Lastly, use the `j' command toggle to make the  COMMAND  column
+          right justified.
+
+          Now  use the right arrow key to reach the COMMAND column.  Con‐
+          tinuing with the right arrow key, watch closely  the  direction
+          of travel for the command lines being shown.
+
+             some lines travel left, while others travel right
+
+             eventually all lines will Switcheroo, and move right
+
+
+8. BUGS
+       To report bugs, follow the instructions at:
+           http://www.debian.org/Bugs/Reporting
+
+
+9. HISTORY Former top
+       The  original  top  was  written  by  Roger Binns, based on Branko
+       Lankester's <lankeste@fwi.uva.nl> ps program.
+
+       Robert Nation <nation@rocket.sanders.lockheed.com> adapted it  for
+       the proc file system.
+
+       Helmut  Geyer  <Helmut.Geyer@iwr.uni-heidelberg.de>  added support
+       for configurable fields.
+
+       Plus many other individuals contributed over the years.
+
+
+10. AUTHOR
+       This entirely new and enhanced replacement was written by:
+           Jim Warner, <james.warner@comcast.net>
+
+       With invaluable help from:
+           Craig Small, <csmall@enc.com.au>
+           Albert Cahalan, <albert@users.sf.net>
+
+
+
+11. SEE Also
+       free(1), ps(1), uptime(1), atop(1), slabtop(1), vmstat(8), w(1).
+
+
+
+procps-ng                       July 2014                          TOP(1)

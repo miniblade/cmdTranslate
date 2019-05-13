@@ -1,0 +1,418 @@
+
+              -n     Read  the  history lines not already read from the history file into the cur‐
+                     rent history list.  These are lines appended to the history  file  since  the
+                     beginning of the current bash session.
+              -r     Read the contents of the history file and use them as the current history.
+              -w     Write the current history to the history file, overwriting the history file's
+                     contents.
+              -p     Perform history substitution on the following args and display the result  on
+                     the  standard  output.  Does not store the results in the history list.  Each
+                     arg must be quoted to disable normal history expansion.
+              -s     Store the args in the history list as a single entry.  The  last  command  in
+                     the history list is removed before the args are added.
+
+              If  the  HISTTIMEFORMAT  variable is set, the time stamp information associated with
+              each history entry is written to the history file, marked with the  history  comment
+              character.   When the history file is read, lines beginning with the history comment
+              character followed immediately by a digit are interpreted as timestamps for the pre‐
+              vious  history line.  The return value is 0 unless an invalid option is encountered,
+              an error occurs while reading or writing the history file, an invalid offset is sup‐
+              plied  as  an argument to -d, or the history expansion supplied as an argument to -p
+              fails.
+
+       jobs [-lnprs] [ jobspec ... ]
+       jobs -x command [ args ... ]
+              The first form lists the active jobs.  The options have the following meanings:
+              -l     List process IDs in addition to the normal information.
+              -n     Display information only about jobs that have changed status since  the  user
+                     was last notified of their status.
+              -p     List only the process ID of the job's process group leader.
+              -r     Restrict output to running jobs.
+              -s     Restrict output to stopped jobs.
+
+              If jobspec is given, output is restricted to information about that job.  The return
+              status is 0 unless an invalid option is encountered or an invalid  jobspec  is  sup‐
+              plied.
+
+              If  the  -x  option  is supplied, jobs replaces any jobspec found in command or args
+              with the corresponding process group ID,  and  executes  command  passing  it  args,
+              returning its exit status.
+
+       kill [-s sigspec | -n signum | -sigspec] [pid | jobspec] ...
+       kill -l [sigspec | exit_status]
+              Send the signal named by sigspec or signum to the processes named by pid or jobspec.
+              sigspec is either a case-insensitive signal name such as SIGKILL  (with  or  without
+              the  SIG  prefix)  or a signal number; signum is a signal number.  If sigspec is not
+              present, then SIGTERM is assumed.  An argument of -l lists the signal names.  If any
+              arguments  are  supplied when -l is given, the names of the signals corresponding to
+              the arguments are listed, and the return status is 0.  The exit_status  argument  to
+              -l  is  a  number  specifying either a signal number or the exit status of a process
+              terminated by a signal.  kill returns true if at least one signal  was  successfully
+              sent, or false if an error occurs or an invalid option is encountered.
+
+       let arg [arg ...]
+              Each  arg  is  an  arithmetic  expression to be evaluated (see ARITHMETIC EVALUATION
+              above).  If the last arg evaluates to 0, let returns 1; 0 is returned otherwise.
+
+       local [option] [name[=value] ...]
+              For each argument, a local variable named name is created, and assigned value.   The
+              option  can  be any of the options accepted by declare.  When local is used within a
+              function, it causes the variable name to have a visible  scope  restricted  to  that
+              function and its children.  With no operands, local writes a list of local variables
+              to the standard output.  It is an error to use local when  not  within  a  function.
+              The  return  status is 0 unless local is used outside a function, an invalid name is
+              supplied, or name is a readonly variable.
+
+       logout Exit a login shell.
+
+       mapfile [-n count] [-O origin] [-s count] [-t] [-u fd] [-C callback] [-c quantum] [array]
+       readarray [-n count] [-O origin] [-s count] [-t] [-u fd] [-C callback] [-c quantum] [array]
+              Read lines from the standard input into the indexed array variable  array,  or  from
+              file  descriptor  fd  if  the  -u  option  is supplied.  The variable MAPFILE is the
+              default array.  Options, if supplied, have the following meanings:
+              -n     Copy at most count lines.  If count is 0, all lines are copied.
+              -O     Begin assigning to array at index origin.  The default index is 0.
+              -s     Discard the first count lines read.
+              -t     Remove a trailing newline from each line read.
+              -u     Read lines from file descriptor fd instead of the standard input.
+              -C     Evaluate callback each time quantum lines are read.  The -c option  specifies
+                     quantum.
+              -c     Specify the number of lines read between each call to callback.
+
+              If -C is specified without -c, the default quantum is 5000.  When callback is evalu‐
+              ated, it is supplied the index of the next array element to be assigned and the line
+              to be assigned to that element as additional arguments.  callback is evaluated after
+              the line is read but before the array element is assigned.
+
+              If not supplied with an explicit origin, mapfile will clear array  before  assigning
+              to it.
+
+              mapfile  returns  successfully  unless  an invalid option or option argument is sup‐
+              plied, array is invalid or unassignable, or if array is not an indexed array.
+
+       popd [-n] [+n] [-n]
+              Removes entries from the directory stack.  With no arguments, removes the top direc‐
+              tory from the stack, and performs a cd to the new top directory.  Arguments, if sup‐
+              plied, have the following meanings:
+              -n     Suppresses the normal change of directory when removing directories from  the
+                     stack, so that only the stack is manipulated.
+              +n     Removes  the  nth  entry  counting  from  the left of the list shown by dirs,
+                     starting with zero.  For example: ``popd +0'' removes  the  first  directory,
+                     ``popd +1'' the second.
+              -n     Removes  the  nth  entry  counting  from the right of the list shown by dirs,
+                     starting with zero.  For example: ``popd -0''  removes  the  last  directory,
+                     ``popd -1'' the next to last.
+
+              If  the popd command is successful, a dirs is performed as well, and the return sta‐
+              tus is 0.  popd returns false if an invalid option  is  encountered,  the  directory
+              stack  is empty, a non-existent directory stack entry is specified, or the directory
+              change fails.
+
+       printf [-v var] format [arguments]
+              Write the formatted arguments to the standard output under the control of  the  for‐
+              mat.  The -v option causes the output to be assigned to the variable var rather than
+              being printed to the standard output.
+
+              The format is a character string which contains three types of objects: plain  char‐
+              acters,  which  are  simply  copied  to standard output, character escape sequences,
+              which are converted and copied to the standard output,  and  format  specifications,
+              each  of  which causes printing of the next successive argument.  In addition to the
+              standard printf(1) format specifications, printf  interprets  the  following  exten‐
+              sions:
+              %b     causes printf to expand backslash escape sequences in the corresponding argu‐
+                     ment (except that \c terminates output, backslashes in \', \", and \? are not
+                     removed, and octal escapes beginning with \0 may contain up to four digits).
+              %q     causes  printf  to  output the corresponding argument in a format that can be
+                     reused as shell input.
+              %(datefmt)T
+                     causes printf to output the date-time string resulting from using datefmt  as
+                     a  format  string  for strftime(3).  The corresponding argument is an integer
+                     representing the number of seconds since the  epoch.   Two  special  argument
+                     values  may  be  used:  -1 represents the current time, and -2 represents the
+                     time the shell was invoked.
+
+              Arguments to non-string format specifiers are treated as C constants, except that  a
+              leading  plus  or minus sign is allowed, and if the leading character is a single or
+              double quote, the value is the ASCII value of the following character.
+
+              The format is reused as necessary to consume all of the arguments.   If  the  format
+              requires more arguments than are supplied, the extra format specifications behave as
+              if a zero value or null string, as appropriate, had been supplied.  The return value
+              is zero on success, non-zero on failure.
+
+       pushd [-n] [+n] [-n]
+       pushd [-n] [dir]
+              Adds a directory to the top of the directory stack, or rotates the stack, making the
+              new top of the stack the current working directory.  With  no  arguments,  exchanges
+              the  top  two directories and returns 0, unless the directory stack is empty.  Argu‐
+              ments, if supplied, have the following meanings:
+              -n     Suppresses the normal change of directory  when  adding  directories  to  the
+                     stack, so that only the stack is manipulated.
+              +n     Rotates  the  stack  so that the nth directory (counting from the left of the
+                     list shown by dirs, starting with zero) is at the top.
+              -n     Rotates the stack so that the nth directory (counting from the right  of  the
+                     list shown by dirs, starting with zero) is at the top.
+              dir    Adds dir to the directory stack at the top, making it the new current working
+                     directory.
+
+              If the pushd command is successful, a dirs is performed as well.  If the first  form
+              is  used,  pushd  returns 0 unless the cd to dir fails.  With the second form, pushd
+              returns 0 unless the directory stack is empty, a non-existent directory  stack  ele‐
+              ment  is  specified,  or the directory change to the specified new current directory
+              fails.
+
+       pwd [-LP]
+              Print the absolute pathname of the current working directory.  The pathname  printed
+              contains no symbolic links if the -P option is supplied or the -o physical option to
+              the set builtin command is enabled.  If the -L option is used, the pathname  printed
+              may  contain  symbolic  links.   The return status is 0 unless an error occurs while
+              reading the name of the current directory or an invalid option is supplied.
+
+       read [-ers] [-a aname] [-d delim] [-i text] [-n nchars] [-N nchars] [-p prompt]  [-t  time‐
+       out] [-u fd] [name ...]
+              One line is read from the standard input, or from the file descriptor fd supplied as
+              an argument to the -u option, and the first word is assigned to the first name,  the
+              second word to the second name, and so on, with leftover words and their intervening
+              separators assigned to the last name.  If there are fewer words read from the  input
+              stream than names, the remaining names are assigned empty values.  The characters in
+              IFS are used to split the line into words.  The backslash character (\) may be  used
+              to remove any special meaning for the next character read and for line continuation.
+              Options, if supplied, have the following meanings:
+              -a aname
+                     The words are assigned to sequential indices of  the  array  variable  aname,
+                     starting  at  0.   aname  is unset before any new values are assigned.  Other
+                     name arguments are ignored.
+              -d delim
+                     The first character of delim is used to terminate the input line, rather than
+                     newline.
+              -e     If  the  standard  input  is  coming  from a terminal, readline (see READLINE
+                     above) is used to obtain the line.  Readline uses the current (or default, if
+                     line editing was not previously active) editing settings.
+              -i text
+                     If  readline  is being used to read the line, text is placed into the editing
+                     buffer before editing begins.
+              -n nchars
+                     read returns after reading nchars characters rather than waiting for  a  com‐
+                     plete  line  of  input, but honor a delimiter if fewer than nchars characters
+                     are read before the delimiter.
+              -N nchars
+                     read returns after reading exactly nchars characters rather than waiting  for
+                     a  complete  line  of  input,  unless  EOF  is encountered or read times out.
+                     Delimiter characters encountered in the input are not treated  specially  and
+                     do not cause read to return until nchars characters are read.
+              -p prompt
+                     Display prompt on standard error, without a trailing newline, before attempt‐
+                     ing to read any input.  The prompt is displayed only if input is coming  from
+                     a terminal.
+              -r     Backslash  does  not act as an escape character.  The backslash is considered
+                     to be part of the line.  In particular, a backslash-newline pair may  not  be
+                     used as a line continuation.
+              -s     Silent mode.  If input is coming from a terminal, characters are not echoed.
+              -t timeout
+                     Cause  read to time out and return failure if a complete line of input is not
+                     read within timeout seconds.  timeout may be a decimal number  with  a  frac‐
+                     tional portion following the decimal point.  This option is only effective if
+                     read is reading input from a terminal, pipe, or other special file; it has no
+                     effect  when  reading from regular files.  If timeout is 0, read returns suc‐
+                     cess if input is available on the specified file descriptor,  failure  other‐
+                     wise.  The exit status is greater than 128 if the timeout is exceeded.
+              -u fd  Read input from file descriptor fd.
+
+              If  no  names  are  supplied,  the line read is assigned to the variable REPLY.  The
+              return code is zero, unless end-of-file is encountered, read  times  out  (in  which
+              case the return code is greater than 128), or an invalid file descriptor is supplied
+              as the argument to -u.
+
+       readonly [-aAf] [-p] [name[=word] ...]
+              The given names are marked readonly; the values of these names may not be changed by
+              subsequent assignment.  If the -f option is supplied, the functions corresponding to
+              the names are so marked.  The -a option restricts the variables to  indexed  arrays;
+              the  -A  option  restricts the variables to associative arrays.  If both options are
+              supplied, -A takes precedence.  If no name arguments are given, or if the -p  option
+              is supplied, a list of all readonly names is printed.  The other options may be used
+              to restrict the output to a subset of the set of  readonly  names.   The  -p  option
+              causes  output  to be displayed in a format that may be reused as input.  If a vari‐
+              able name is followed by =word, the value of the  variable  is  set  to  word.   The
+              return  status is 0 unless an invalid option is encountered, one of the names is not
+              a valid shell variable name, or -f is supplied with a name that is not a function.
+
+       return [n]
+              Causes a function to exit with the return value specified by n.  If  n  is  omitted,
+              the  return  status  is  that of the last command executed in the function body.  If
+              used outside a function, but during execution of a script by the  .   (source)  com‐
+              mand,  it  causes the shell to stop executing that script and return either n or the
+              exit status of the last command executed within the script as the exit status of the
+              script.   If  used outside a function and not during execution of a script by ., the
+              return status is false.  Any command associated with the  RETURN  trap  is  executed
+              before execution resumes after the function or script.
+
+       set [--abefhkmnptuvxBCEHPT] [-o option-name] [arg ...]
+       set [+abefhkmnptuvxBCEHPT] [+o option-name] [arg ...]
+              Without options, the name and value of each shell variable are displayed in a format
+              that can be reused as input for setting or resetting  the  currently-set  variables.
+              Read-only  variables  cannot  be  reset.   In  posix  mode, only shell variables are
+              listed.  The output is sorted according to the current  locale.   When  options  are
+              specified, they set or unset shell attributes.  Any arguments remaining after option
+              processing are treated as values for the positional parameters and are assigned,  in
+              order, to $1, $2, ...  $n.  Options, if specified, have the following meanings:
+              -a      Automatically mark variables and functions which are modified or created for
+                      export to the environment of subsequent commands.
+              -b      Report the status of terminated background  jobs  immediately,  rather  than
+                      before  the next primary prompt.  This is effective only when job control is
+                      enabled.
+              -e      Exit immediately if a pipeline (which may consist of a  single  simple  com‐
+                      mand),   a  subshell command enclosed in parentheses, or one of the commands
+                      executed as part of a command list enclosed by  braces  (see  SHELL  GRAMMAR
+                      above) exits with a non-zero status.  The shell does not exit if the command
+                      that fails is part of the command list  immediately  following  a  while  or
+                      until  keyword,  part  of  the test following the if or elif reserved words,
+                      part of any command executed in a && or || list except the command following
+                      the  final  && or ||, any command in a pipeline but the last, or if the com‐
+                      mand's return value is being inverted with !.  A trap on  ERR,  if  set,  is
+                      executed  before the shell exits.  This option applies to the shell environ‐
+                      ment and each subshell environment separately (see COMMAND  EXECUTION  ENVI‐
+                      RONMENT  above),  and  may  cause subshells to exit before executing all the
+                      commands in the subshell.
+              -f      Disable pathname expansion.
+              -h      Remember the location of commands as they are looked up for execution.  This
+                      is enabled by default.
+              -k      All  arguments  in the form of assignment statements are placed in the envi‐
+                      ronment for a command, not just those that precede the command name.
+              -m      Monitor mode.  Job control is enabled.  This option is  on  by  default  for
+                      interactive  shells  on  systems  that  support  it (see JOB CONTROL above).
+                      Background processes run in a separate process group and a  line  containing
+                      their exit status is printed upon their completion.
+              -n      Read  commands  but  do not execute them.  This may be used to check a shell
+                      script for syntax errors.  This is ignored by interactive shells.
+              -o option-name
+                      The option-name can be one of the following:
+                      allexport
+                              Same as -a.
+                      braceexpand
+                              Same as -B.
+                      emacs   Use an emacs-style command line editing interface.  This is  enabled
+                              by  default  when  the  shell  is  interactive,  unless the shell is
+                              started with the --noediting option.  This also affects the  editing
+                              interface used for read -e.
+                      errexit Same as -e.
+                      errtrace
+                              Same as -E.
+                      functrace
+                              Same as -T.
+                      hashall Same as -h.
+                      histexpand
+                              Same as -H.
+                      history Enable  command  history,  as  described  above under HISTORY.  This
+                              option is on by default in interactive shells.
+                      ignoreeof
+                              The effect is as if the shell command ``IGNOREEOF=10'' had been exe‐
+                              cuted (see Shell Variables above).
+                      keyword Same as -k.
+                      monitor Same as -m.
+                      noclobber
+                              Same as -C.
+                      noexec  Same as -n.
+                      noglob  Same as -f.
+                      nolog   Currently ignored.
+                      notify  Same as -b.
+                      nounset Same as -u.
+                      onecmd  Same as -t.
+                      physical
+                              Same as -P.
+                      pipefail
+                              If  set,  the  return  value  of a pipeline is the value of the last
+                              (rightmost) command to exit with a non-zero status, or zero  if  all
+                              commands in the pipeline exit successfully.  This option is disabled
+                              by default.
+                      posix   Change the behavior of bash where the default operation differs from
+                              the POSIX standard to match the standard (posix mode).
+                      privileged
+                              Same as -p.
+                      verbose Same as -v.
+                      vi      Use  a  vi-style  command line editing interface.  This also affects
+                              the editing interface used for read -e.
+                      xtrace  Same as -x.
+                      If -o is supplied with no option-name, the values of the current options are
+                      printed.  If +o is supplied with no option-name, a series of set commands to
+                      recreate the current option settings is displayed on the standard output.
+              -p      Turn on privileged mode.  In this mode, the $ENV and $BASH_ENV files are not
+                      processed,  shell  functions are not inherited from the environment, and the
+                      SHELLOPTS, BASHOPTS, CDPATH, and GLOBIGNORE variables, if they appear in the
+                      environment,  are  ignored.  If the shell is started with the effective user
+                      (group) id not equal to the real user (group) id, and the -p option  is  not
+                      supplied,  these  actions  are taken and the effective user id is set to the
+                      real user id.  If the -p option is supplied at startup, the  effective  user
+                      id  is  not  reset.   Turning  this option off causes the effective user and
+                      group ids to be set to the real user and group ids.
+              -t      Exit after reading and executing one command.
+              -u      Treat unset variables and parameters other than the special  parameters  "@"
+                      and  "*"  as  an error when performing parameter expansion.  If expansion is
+                      attempted on an unset variable or parameter, the shell prints an error  mes‐
+                      sage, and, if not interactive, exits with a non-zero status.
+              -v      Print shell input lines as they are read.
+              -x      After  expanding each simple command, for command, case command, select com‐
+                      mand, or arithmetic for command, display the expanded value of PS4, followed
+                      by the command and its expanded arguments or associated word list.
+              -B      The  shell performs brace expansion (see Brace Expansion above).  This is on
+                      by default.
+              -C      If set, bash does not overwrite an existing file with the >, >&, and <>  re‐
+                      direction  operators.   This may be overridden when creating output files by
+                      using the redirection operator >| instead of >.
+              -E      If set, any trap on ERR is inherited by shell functions,  command  substitu‐
+                      tions,  and  commands  executed  in a subshell environment.  The ERR trap is
+                      normally not inherited in such cases.
+              -H      Enable !  style history substitution.  This option is on by default when the
+                      shell is interactive.
+              -P      If  set,  the  shell  does not follow symbolic links when executing commands
+                      such as cd that change the current working directory.  It uses the  physical
+                      directory  structure instead.  By default, bash follows the logical chain of
+                      directories when performing commands which change the current directory.
+              -T      If set, any traps on DEBUG and RETURN are inherited by shell functions, com‐
+                      mand  substitutions,  and  commands executed in a subshell environment.  The
+                      DEBUG and RETURN traps are normally not inherited in such cases.
+              --      If no arguments follow this  option,  then  the  positional  parameters  are
+                      unset.   Otherwise,  the  positional parameters are set to the args, even if
+                      some of them begin with a -.
+              -       Signal the end of options, cause all remaining args to be  assigned  to  the
+                      positional  parameters.  The -x and -v options are turned off.  If there are
+                      no args, the positional parameters remain unchanged.
+
+              The options are off by default unless otherwise noted.  Using + rather than - causes
+              these  options  to be turned off.  The options can also be specified as arguments to
+              an invocation of the shell.  The current set of options may be  found  in  $-.   The
+              return status is always true unless an invalid option is encountered.
+
+       shift [n]
+              The  positional  parameters  from  n+1 ... are renamed to $1 ....  Parameters repre‐
+              sented by the numbers $# down to $#-n+1 are unset.  n must be a non-negative  number
+              less than or equal to $#.  If n is 0, no parameters are changed.  If n is not given,
+              it is assumed to be 1.  If n is greater than $#, the positional parameters  are  not
+              changed.   The  return  status  is greater than zero if n is greater than $# or less
+              than zero; otherwise 0.
+
+       shopt [-pqsu] [-o] [optname ...]
+              Toggle the values  of  variables  controlling  optional  shell  behavior.   With  no
+              options, or with the -p option, a list of all settable options is displayed, with an
+              indication of whether or not each is set.  The -p option causes output  to  be  dis‐
+              played  in  a  form  that  may be reused as input.  Other options have the following
+              meanings:
+              -s     Enable (set) each optname.
+              -u     Disable (unset) each optname.
+              -q     Suppresses normal output (quiet mode); the return  status  indicates  whether
+                     the  optname  is  set or unset.  If multiple optname arguments are given with
+                     -q, the return status is zero if all optnames are  enabled;  non-zero  other‐
+                     wise.
+              -o     Restricts  the values of optname to be those defined for the -o option to the
+                     set builtin.
+
+              If either -s or -u is used with no optname arguments,  the  display  is  limited  to
+              those  options  which  are  set or unset, respectively.  Unless otherwise noted, the
+              shopt options are disabled (unset) by default.
+
+              The return status when listing options is zero if all optnames are enabled, non-zero
+              otherwise.   When  setting or unsetting options, the return status is zero unless an
+              optname is not a valid shell option.
+
+              The list of shopt options is:
+
+              autocd  If set, a command name that is the name of a directory is executed as i

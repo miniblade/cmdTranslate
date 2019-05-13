@@ -1,0 +1,251 @@
+READELF（1）GNU开发工具READELF（1）
+
+
+
+名称
+       readelf  - 显示有关ELF文件的信息。
+
+概要
+       readelf [-a | --all]
+               [-h | --file报头]
+               [-l | --program报头| --segments]
+               [-S | --section报头| --sections]
+               [-g | --section基]
+               [-t | --section-详情]
+               [-e | --headers]
+               [-S | --syms | --symbols]
+               [--dyn-SYMS]
+               [-n | --notes]
+               [-r | --relocs]
+               [-u | --unwind]
+               [-d | --dynamic]
+               [-V | --version信息]
+               [-A | --arch专用]
+               [-D | --use动态]
+               [-x <数字或名称> | --hex-dump = <数字或名称>]
+               [-p <number or name> | --string-dump = <number or name>]
+               [-R <number or name> | --relocated-dump = <number or name>]
+               [-c | --archive指数]
+               [-w [lLiaprmfFsoRt] |
+                --debug-转储[= rawline，= decodedline，=信息，=缩写，= pubnames，= aranges，=宏，=帧，帧=-interp的，= STR，= LOC，=范围，= pubtypes，= trace_info， = trace_abbrev，= trace_aranges，= gdb_index]]
+               [--dwarf深入= N]
+               [--dwarf起动= N]
+               [-I | --histogram]
+               [-v | --version]
+               [-W | --wide]
+               [-H | --help]
+               elffile ...
+
+描述
+       readelf显示有关一个或多个ELF格式对象文件的信息。
+       选项控制要显示的特定信息。
+
+       elffile ...是要检查的目标文件。 32位和64位ELF
+       支持文件，包含ELF文件的存档也是如此。
+
+       该程序执行与objdump类似的功能，但它进入
+       更多细节，它独立于BFD库存在，所以如果有的话
+       是BFD中的一个错误，然后readelf不会受到影响。
+
+OPTIONS
+       这里显示的长期和短期选项是替代方案
+       当量。除了-v或-H之外，必须至少提供一个选项。
+
+       -一个
+        - 所有
+           相当于指定--file-header， -  program-headers，
+           --sections， -  symbol， -  expand， -  dynamic， -  notes和
+            - 版本信息。
+
+       -H
+       --file头
+           在开始时显示ELF头中包含的信息
+           的文件。
+
+       -l
+       --program报头
+       --segments
+           显示文件段标题中包含的信息，
+           如果有的话。
+
+       -S
+       --sections
+       --section报头
+           显示文件节标题中包含的信息，
+           如果有的话。
+
+       -G
+       --section团
+           显示文件的节组中包含的信息，如果
+           它有任何。
+
+       -t
+       --section-细节
+           显示详细的部分信息。意味着-S。
+
+       -s
+       --symbols
+       --syms
+           显示文件的符号表部分中的条目（如果有）
+           一。
+
+       --dyn，SYMS
+           显示文件的动态符号表部分中的条目，
+           如果它有一个。
+
+       -e
+       --headers
+           显示文件中的所有标头。相当于-h -l -S。
+
+       -n
+        - 笔记
+           显示NOTE段和/或部分的内容（如果有）。
+
+       -r
+       --relocs
+           显示文件重定位部分的内容（如果有）
+           一。
+
+       -u
+        - 放松
+           显示文件的展开部分的内容（如果有）。
+           只有IA64 ELF文件的展开部分，以及ARM展开
+           目前支持表（“。ARM.exidx”/“。ARM.extab”）。
+
+       -d
+        - 动态
+           显示文件动态部分的内容（如果有）。
+
+       -V
+        - 版本信息
+           显示文件中版本部分的内容，它们
+           存在。
+
+       -一个
+       --arch专用
+           如果存在，则在文件中显示特定于体系结构的信息
+           任何。
+
+       -D
+       --use动态
+           显示符号时，此选项使readelf使用符号
+           文件动态部分中的哈希表，而不是符号
+           表格部分。
+
+       -x <数字或名称>
+       --hex-dump = <数字或名称>
+           以十六进制显示指示部分的内容
+           字节。数字通过索引标识特定部分
+           节表;任何其他字符串都标识所有部分
+           目标文件中的名称。
+
+       -R <编号或名称>
+       --relocated-dump = <数字或名称>
+           以十六进制显示指示部分的内容
+           字节。数字通过索引标识特定部分
+           节表;任何其他字符串都标识所有部分
+           目标文件中的名称。该部分的内容将是
+           在显示之前重新定位。
+
+       -p <数字或名称>
+       --string-dump = <数字或名称>
+           将指示部分的内容显示为可打印
+           字符串。数字通过索引标识特定部分
+           节表;任何其他字符串都标识所有部分
+           目标文件中的名称。
+
+       -C
+       --archive指数
+           显示标头中包含的文件符号索引信息
+           二进制档案的一部分。执行与t相同的功能
+           命令到ar，但不使用BFD库。
+
+       -w [lLiaprmfFsoRt]
+       --debug-转储[= rawline，= decodedline，=信息，=缩写，= pubnames，= aranges，=宏，=帧，帧=-interp的，= STR，= LOC，=范围，= pubtypes，= trace_info， = trace_abbrev，= trace_aranges，= gdb_index]
+           显示文件中调试部分的内容（如果有）
+           当下。如果其中一个可选字母或单词跟随
+           然后只切换那些特定部分中的数据
+           倾倒。
+
+           请注意，没有单个字母选项来显示内容
+           跟踪部分或.gdb_index。
+
+           注意：= codedline选项将显示解释的内容
+           一个.debug_line部分，而= rawline选项转储
+           原始格式的内容。
+
+           注意：= frames-interp选项将显示已解释的
+           .debug_frame部分的内容，而= frames选项转储
+           原始格式的内容。
+
+           注意：= info选项的输出也可能受到影响
+           选项--dwarf-depth和--dwarf-start。
+
+       --dwarf深入=正
+           将“.debug_info”部分的转储限制为n个子级。这是
+           仅对--debug-dump = info有用。默认是打印全部
+           死亡; n的特殊值0也会产生这种效果。
+
+           对于n的非零值，处于或等于n级的DIE将
+           不打印。 n的范围是从零开始的。
+
+       --dwarf启动=正
+           仅打印以编号为n的DIE开头的DIE。这只是
+           有用--debug-dump = info。
+
+           如果指定，此选项将禁止打印任何标题
+           信息和DIE编号为n之前的所有DIE。只有兄弟姐妹
+           将打印指定DIE的子项。
+
+           这可以与--dwarf-depth一起使用。
+
+       -一世
+       --histogram
+           显示时显示桶列表长度的直方图
+           符号表的内容。
+
+       -v
+        - 版
+           显示readelf的版本号。
+
+       -W
+        - 宽
+           不要破坏输出线以适应80列。默认情况下readelf
+           中断64位ELF的节标题和段列表行
+           文件，以便它们适合80列。此选项会导致readelf
+           打印每个部分标题resp。每个部分一个单行，
+           这在宽于80列的终端上更易读。
+
+       -H
+        - 救命
+           显示readelf理解的命令行选项。
+
+       @文件
+           从文件中读取命令行选项。插入的选项被插入
+           代替原始的@file选项。如果文件不存在，或
+           无法阅读，那么该选项将按字面意思处理，而不是
+           除去。
+
+           文件中的选项由空格分隔。一个空白
+           字符可以包含在一个选项中，包围整个
+           单引号或双引号中的选项。任何角色（包括
+           可以通过为角色加前缀来包括反斜杠
+           包含反斜杠。该文件本身可能包含其他内容
+           @file选项;任何此类选项将以递归方式处理。
+
+也可以看看
+       objdump（1），以及binutils的Info条目。
+
+版权
+       版权所有（c）1991-2014 Free Software Foundation，Inc。
+
+       允许复制，分发和/或修改本文档
+       根据GNU自由文档许可证1.3版或
+       自由软件基金会发布的任何更新版本;没有
+       不变章节，没有封面文字，没有封底
+       文本。许可证的副本包含在标题为“GNU”的部分中
+       免费文档许可证“。
+
+
+
+binutils-2.25 2014-12-23 READELF（1）

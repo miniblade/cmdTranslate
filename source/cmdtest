@@ -1,0 +1,98 @@
+数组的元素为: gdb ldd lsof ps pstack strace ipcs top free vmstat iostat sar readelf objdump nm size wget scp crontab
+sign 	gdb -v  GNU gdb (GDB) Red Hat Enterprise Linux 7.6.1-114.el7
+Copyright (C) 2013 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-redhat-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+sign 	ldd -v  
+sign 	lsof -v  
+sign 	ps -v    PID TTY      STAT   TIME  MAJFL   TRS   DRS   RSS %MEM COMMAND
+  513 ttyS0    Ss+    0:00      1    30 110061  864  0.0 /sbin/agetty --keep-baud 115200 38400 9600 ttyS0 vt220
+ 1348 tty1     Ss+    0:00      1   882 114557 2100  0.2 -bash
+12729 pts/0    Ss     0:00      0   882 114657 2128  0.2 -bash
+12903 pts/0    S+     0:00      0    52 108199  620  0.0 xargs sh cmdhand.sh
+12904 pts/0    S+     0:00      0   882 112297 1464  0.1 sh cmdhand.sh gdb ldd lsof ps pstack strace ipcs top free vmstat iostat sar readelf objdump nm size wget scp crontab
+12909 pts/0    R+     0:00      0    89 148894 1484  0.1 ps -v
+sign 	pstack -v  
+sign 	strace -v  
+sign 	ipcs -v  
+sign 	top -v    procps-ng version 3.3.10
+Usage:
+  top -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]
+sign 	free -v  
+sign 	vmstat -v  
+sign 	iostat -v  
+sign 	sar -v  Linux 3.10.0-693.2.2.el7.x86_64 (iz2zefjkf2rm4jltbbvvt1z) 	05/09/2019 	_x86_64_	(1 CPU)
+
+12:00:01 AM dentunusd   file-nr  inode-nr    pty-nr
+12:10:01 AM     61801      1056     48531         2
+12:20:01 AM     61804      1056     48528         2
+12:30:01 AM     61745       928     48446         1
+12:40:01 AM     61751       928     48446         1
+12:50:01 AM     61757       928     48446         1
+01:00:01 AM     61714       800     48369         0
+01:10:01 AM     61726       800     48369         0
+01:20:01 AM     61732       800     48369         0
+01:30:01 AM     61738       800     48369         0
+01:40:01 AM     61744       800     48369         0
+01:50:01 AM     61750       800     48369         0
+02:00:01 AM     61756       800     48369         0
+02:10:01 AM     61768       800     48369         0
+02:20:01 AM     61774       800     48369         0
+02:30:01 AM     61780       800     48369         0
+02:40:01 AM     61786       800     48369         0
+02:50:01 AM     61792       800     48369         0
+03:00:01 AM     61798       800     48369         0
+03:10:01 AM     61822       832     48398         0
+03:20:01 AM     61828       832     48398         0
+03:30:01 AM     61837       832     48401         0
+03:40:01 AM     61843       832     48401         0
+03:50:01 AM     61885       864     48441         0
+04:00:01 AM     61882       832     48401         0
+04:10:01 AM     61879       800     48369         0
+04:20:01 AM     61885       800     48369         0
+04:30:01 AM     61891       800     48369         0
+04:40:01 AM     61897       800     48369         0
+04:50:01 AM     61903       800     48369         0
+05:00:01 AM     61909       800     48369         0
+05:10:01 AM     61921       800     48369         0
+05:20:01 AM     61927       800     48369         0
+05:30:01 AM     61930       800     48366         0
+05:40:01 AM     61939       800     48369         0
+05:50:01 AM     61945       800     48369         0
+06:00:01 AM     61951       800     48369         0
+06:10:01 AM     61963       800     48369         0
+06:20:01 AM     61969       800     48369         0
+06:30:01 AM     61975       800     48369         0
+06:40:01 AM     61981       800     48369         0
+06:50:01 AM     61987       800     48369         0
+07:00:01 AM     61993       800     48369         0
+07:10:01 AM     62007       800     48369         0
+07:20:01 AM     62013       800     48369         0
+07:30:01 AM     62019       800     48369         0
+07:40:02 AM     58213       896     47253         1
+07:50:01 AM     58794       896     47440         1
+Average:        61717       828     48342         0
+sign 	readelf -v  GNU readelf version 2.25.1-32.base.el7_4.1 
+Copyright (C) 2014 Free Software Foundation, Inc.
+This program is free software; you may redistribute it under the terms of
+the GNU General Public License version 3 or (at your option) any later version.
+This program has absolutely no warranty.
+sign 	objdump -v  GNU objdump version 2.25.1-32.base.el7_4.1 
+Copyright (C) 2014 Free Software Foundation, Inc.
+This program is free software; you may redistribute it under the terms of
+the GNU General Public License version 3 or (at your option) any later version.
+This program has absolutely no warranty.
+sign 	nm -v  
+sign 	size -v  GNU size version 2.25.1-32.base.el7_4.1 
+Copyright (C) 2014 Free Software Foundation, Inc.
+This program is free software; you may redistribute it under the terms of
+the GNU General Public License version 3 or (at your option) any later version.
+This program has absolutely no warranty.
+sign 	wget -v  
+sign 	scp -v  
+sign 	crontab -v  

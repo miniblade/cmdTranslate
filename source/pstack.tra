@@ -1,0 +1,34 @@
+GSTACK（1）Linux程序员手册GSTACK（1）
+
+
+
+名称
+       gstack  - 打印正在运行的进程的堆栈跟踪
+
+
+概要
+       gstack pid
+
+
+描述
+       gstack附加到命令上的pid命名的活动进程
+       行，并打印出执行堆栈跟踪。如果存在ELF符号
+       二进制文件（通常情况除非你运行strip（1）），然后是sym-
+       也打印了bolic地址。
+
+       如果进程是线程组的一部分，那么gstack将打印出一个
+       堆栈中每个线程的跟踪。
+
+
+也可以看看
+       nm（1），ptrace（2），gdb（1）
+
+
+作者
+       罗斯汤普森<ross@whatsis.com>
+
+       Red Hat，Inc。<http://bugzilla.redhat.com/bugzilla>
+
+
+
+Red Hat Linux 2008年2月15日GSTACK（1）

@@ -1,0 +1,92 @@
+IPCS（1）用户命令IPCS（1）
+
+
+
+名称
+       ipcs  - 提供有关IPC设施的信息
+
+概要
+       ipcs [resource-option] [输出格式]
+       ipcs [resource-option] -i id
+
+描述
+       ipcs提供有关进程间通信工具的信息
+       调用进程具有读访问权限。
+
+OPTIONS
+       -i， -  id
+              仅在由id标识的资源上打印详细信息。
+
+       -h， -  help
+              显示帮助文本并退出。
+
+       -V， -  version
+              显示版本信息并退出。
+
+   资源选择
+       -q， - 队列
+              写入有关活动消息队列的信息。
+
+       -m， -  shmems
+              写入有关活动共享内存段的信息。
+
+       -s， - 信号量
+              写入有关活动信号量集的信息。
+
+       -a， -  all
+              写入有关所有三种资源的信息（默认）。
+
+   输出格式
+       在这些选项中，只有一个生效：指定的最后一个。
+
+       -c， -  creator
+              显示创建者和所有者。
+
+       -l， - 限制
+              显示资源限制。
+
+       -p， -  pid
+              显示创建者和最后一个运算符的PID。
+
+       -t， -  time
+              写时间信息。最后一次控制操作的时间
+              这改变了所有设施的访问权限，时间
+              对消息队列的最后一次msgsnd（）和msgrcv（）操作，
+              共享上最后一次shmat（）和shmdt（）操作的时间
+              内存，以及sema上最后一次semop（）操作的时间
+              phores。
+
+       -u， - 总结
+              显示状态摘要。
+
+   表示
+       这些只影响-l（ -  limit）选项。
+
+       -b， - 字节
+              打印大小（字节）。
+
+       --human
+              以人类可读的格式打印尺寸。
+
+也可以看看
+       ipcrm（1），ipcmk（1），msgrcv（2），msgsnd（2），semget（2），semop（2），
+       shmat（2），shmdt（2），shmget（2）
+
+符合
+       Linux ipcs实用程序与POSIX ipcs util-不完全兼容
+       两者均。 Linux版本不支持POSIX -a，-b和-o
+       选项，但确实支持POSIX未定义的-l和-u选项。
+       便携式应用程序不得使用-a，-b，-o，-l和-u
+       选项。
+
+作者
+       KrishnaBalasubramanian⟨balasub@cis.ohio-state.edu⟩
+
+可用性
+       ipcs命令是util-linux软件包的一部分，可用
+       来自Linux KernelArchive⟨ftp：//ftp.kernel.org/pub/linux/utils/util-
+       LINUX /⟩。
+
+
+
+util-linux 2013年1月IPCS（1）

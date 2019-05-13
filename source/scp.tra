@@ -1,0 +1,168 @@
+SCP（1）BSD通用命令手册SCP（1）
+
+名称
+     scp  - 安全副本（远程文件复制程序）
+
+概要
+     scp [-12346BCpqrv] [-c cipher] [-F ssh_config] [-i identity_file]
+         [-l limit] [-o ssh_option] [-P port] [-S program]
+         [[user @] host1：] file1 ... [[user @] host2：] file2
+
+描述
+     scp在网络上的主机之间复制文件。它使用ssh（1）作为数据
+     传输，并使用相同的身份验证，并提供相同的安全性
+     作为ssh（1）。如果需要，scp会要求输入密码或密码
+     用于身份验证
+
+     文件名可以包含用户和主机规范以指示
+     文件将被复制到该主机或从该主机复制。可以制作本地文件名
+     显式使用绝对路径名或相对路径名以避免scp处理文件
+     包含'：'作为主机说明符的名称。两个远程主机之间的副本
+     也是允许的。
+
+     选项如下：
+
+     -1强制scp使用协议1。
+
+     -2强制scp使用协议2。
+
+     -3两个远程主机之间的副本通过本地传输
+             主办。如果没有此选项，数据将直接复制
+             两个远程主机。请注意，此选项会禁用
+             进度表。
+
+     -4强制scp仅使用IPv4地址。
+
+     -6强制scp仅使用IPv6地址。
+
+     -B选择批处理模式（防止要求输入密码或
+             密码短语）。
+
+     -C压缩启用。将-C标志传递给ssh（1）以启用com-
+             压力。
+
+     -c密码
+             选择用于加密数据传输的密码。这个
+             选项直接传递给ssh（1）。
+
+     -F ssh_config
+             为ssh指定备用的每用户配置文件。
+             此选项直接传递给ssh（1）。
+
+     -i identity_file
+             选择用于公开的标识（私钥）的文件
+             读取密钥认证。此选项直接传递给
+             SSH（1）。
+
+     -l限制
+             限制使用的带宽，以Kbit / s为单位。
+
+     -o ssh_option
+             可用于将选项传递给ssh中使用的格式
+             ssh_config中（5）。这对于指定选项非常有用
+             没有单独的scp命令行标志。有关的详细信息
+             下面列出的选项及其可能的值，请参阅
+             ssh_config中（5）。
+
+                   AddressFamily
+                   批处理模式
+                   BindAddress
+                   CanonicalDomains
+                   CanonicalizeFallbackLocal
+                   CanonicalizeHostname
+                   CanonicalizeMaxDots
+                   CanonicalizePermittedCNAMEs
+                   CertificateFile
+                   ChallengeResponse验证
+                   CheckHostIP
+                   暗号
+                   密码
+                   压缩
+                   CompressionLevel
+                   ConnectionAttempts
+                   ConnectTimeout
+                   ControlMaster
+                   了ControlPath
+                   ControlPersist
+                   GlobalKnownHostsFile
+                   GSSAPIAuthentication
+                   GSSAPIDelegateCredentials
+                   HashKnownHosts
+                   主办
+                   Hostbase验证
+                   HostbasedKeyTypes
+                   HostKeyAlgorithms
+                   HostKeyAlias
+                   主机名
+                   IdentitiesOnly
+                   IdentityAgent
+                   IdentityFile
+                   的IPQoS
+                   KbdInteractiveAuthentication
+                   KbdInteractiveDevices
+                   KexAlgorithms
+                   LogLevel的
+                   互助
+                   NoHostAuthenticationForLocalhost
+                   NumberOfPasswordPrompts
+                   Password验证
+                   PKCS11Provider
+                   港口
+                   PreferredAuthentications
+                   协议
+                   ProxyCommand
+                   ProxyJump
+                   PubkeyAcceptedKeyTypes
+                   Pubkey验证
+                   RekeyLimit
+                   RhostsRSA验证
+                   RSA验证
+                   SendEnv
+                   ServerAliveInterval
+                   ServerAliveCountMax
+                   StrictHostKeyChecking
+                   TCPKEEPALIVE
+                   UpdateHostKeys
+                   UsePrivilegedPort
+                   用户
+                   UserKnownHostsFile
+                   VerifyHostKeyDNS
+
+     -P端口
+             指定要在远程主机上连接的端口。注意
+             此选项使用大写'P'编写，因为-p已经存在
+             保留用于保留文件的时间和模式。
+
+     -p保留修改时间，访问时间和模式
+             原始文件。
+
+     -q安静模式：禁用进度表以及警告和
+             来自ssh（1）的诊断消息。
+
+     -r递归复制整个目录。请注意，scp遵循sym-
+             树遍历中遇到的bolic链接。
+
+     -S程序
+             用于加密连接的程序名称。该程序
+             必须了解ssh（1）选项。
+
+     -v详细模式。导致scp和ssh（1）打印调试消息
+             关于他们的进步。这有助于调试连接，
+             身份验证和配置问题。
+
+退出状态
+     scp实用程序在成功时退出0，如果发生错误则退出> 0。
+
+也可以看看
+     sftp（1），ssh（1），ssh-add（1），ssh-agent（1），ssh-keygen（1），ssh_config（5），
+     的sshd（8）
+
+历史
+     scp基于来自Regents of的BSD源代码中的rcp程序
+     加州大学。
+
+作者
+     Timo Rinne <tri@iki.fi>
+     Tatu Ylonen <ylo@cs.hut.fi>
+
+BSD 2019年5月9日BSD

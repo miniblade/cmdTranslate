@@ -1,0 +1,110 @@
+CRONTAB（1）用户命令CRONTAB（1）
+
+
+
+名称
+       crontab  - 为单个用户维护crontab文件
+
+概要
+       crontab [-u user]文件
+       crontab [-u user] [-l | -r | -e] [-i] [-s]
+       crontab -n [hostname]
+       crontab -c
+
+描述
+       Crontab是用于安装crontab表文件的程序，删除或
+       列出用于为cron（8）守护程序提供服务的现有表。每个用户
+       可以有自己的crontab，虽然这些是/ var / spool /中的文件，
+       它们不打算直接编辑。对于MLS模式下的SELinux，
+       你可以为每个范围定义更多的crontabs。有关更多信息，请参阅
+       selinux的（8）。
+
+       在此版本的Cron中，可以使用网络安装的共享
+       / var / spool / cron跨主机群集并指定只有一个
+       主机应该在特定目录中运行crontab作业
+       任何一次。您也可以使用任何这些主机中的crontab（1）
+       编辑相同的共享crontab文件集，并设置和查询哪些
+       主机应该运行crontab作业。
+
+       对于不同的用户，可以允许或禁止运行cron作业。
+       为此，请使用cron.allow和cron.deny文件。如果
+       cron.allow文件存在，必须在其中列出允许的用户
+       使用cron如果cron.allow文件不存在但是cron.deny文件
+       确实存在，那么用户不能列在cron.deny文件中
+       为了使用cron。如果这些文件都不存在，则只有super
+       用户可以使用cron。限制访问cron的另一种方法是
+       在/etc/security/access.conf中使用PAM身份验证来设置用户，
+       允许或禁止使用crontab或修改系统cron
+       /etc/cron.d/目录中的作业。
+
+       可以在环境变量中设置临时目录。如果它
+       如果未由用户设置，则使用/ tmp目录。
+
+OPTIONS
+       -u附加要修改其crontab的用户的名称。
+              如果不使用此选项，crontab会检查“你的”crontab，
+              即，执行命令的人的crontab。注意
+              因此，当执行命令时，su（8）可能会混淆crontab
+              在su（8）下你应该总是使用-u选项。如果没有crontab
+              对于特定用户而言，它是第一个为他创建的
+              时间在他的用户名下使用crontab -u命令。
+
+       -l显示标准输出上的当前crontab。
+
+       -r删除当前的crontab。
+
+       -e使用VIS指定的编辑器编辑当前的crontab-
+              UAL或EDITOR环境变量。退出后
+              编辑器，修改后的crontab将自动安装。
+
+       -i此选项修改-r选项以提示用户输入
+              实际删除crontab之前的'y / Y'响应。
+
+       -s将当前SELinux安全上下文字符串追加为
+              在编辑/替换之前将MLS_LEVEL设置为crontab文件
+              发生 - 请参阅crontab（5）中的MLS_LEVEL文档。
+
+       -n只有在使用-c启动cron（8）时，此选项才有意义
+              选项，以启用群集支持。它用于设置
+              集群中的主机应该运行在中指定的作业
+              / var / spool / cron目录中的crontab文件。如果是主机名
+              是提供的，主机名由gethostname（2）返回的主机
+              匹配提供的主机名，将被选中运行
+              随后选择了cron工作。如果没有主持人
+              与提供的主机名匹配的集群，或者您明确指定了
+              如果是空主机名，则不会运行所选作业
+              所有。如果省略主机名，则为本地主机的名称
+              使用gethostname（2）返回。使用此选项没有
+              对/ etc / crontab文件和/etc/cron.d中的文件产生影响
+              目录，始终运行，并被视为特定于主机。
+              有关群集支持的更多信息，请参阅cron（8）。
+
+       -c此选项仅在使用-c启动cron（8）时才相关
+              选项，以启用群集支持。它用于查询哪个
+              群集中的主机当前设置为运行指定的作业
+              在目录/ var / spool / cron中的crontab文件中，如set
+              使用-n选项。
+
+也可以看看
+       crontab（5），cron（8）
+
+FILES
+       /etc/cron.allow
+       /etc/cron.deny
+
+标准
+       crontab命令符合IEEE Std1003.2-1992（“POSIX”）。这个
+       新命令语法与以前版本的Vixie Cron不同，如
+       以及经典的SVR3语法。
+
+诊断
+       如果您运行带有故障的crontab，则会显示一条信息性用法消息
+       在其中定义的命令。
+
+作者
+       PaulVixie⟨vixie@isc.org⟩
+       ColinDean⟨colin@colin-dean.org⟩
+
+
+
+cronie 2012-11-22 CRONTAB（1）

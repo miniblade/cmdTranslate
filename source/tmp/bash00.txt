@@ -1,0 +1,477 @@
+BASH(1)                               General Commands Manual                              BASH(1)
+
+
+
+NAME
+       bash - GNU Bourne-Again SHell
+
+SYNOPSIS
+       bash [options] [file]
+
+COPYRIGHT
+       Bash is Copyright (C) 1989-2011 by the Free Software Foundation, Inc.
+
+DESCRIPTION
+       Bash  is an sh-compatible command language interpreter that executes commands read from the
+       standard input or from a file.  Bash also incorporates useful features from the Korn and  C
+       shells (ksh and csh).
+
+       Bash  is  intended  to be a conformant implementation of the Shell and Utilities portion of
+       the IEEE POSIX specification (IEEE Standard 1003.1).  Bash can be configured to  be  POSIX-
+       conformant by default.
+
+OPTIONS
+       All of the  single-character shell options documented in the description of the set builtin
+       command can be used as options when the shell is invoked.  In addition, bash interprets the
+       following options when it is invoked:
+
+       -c string If  the  -c  option is present, then commands are read from string.  If there are
+                 arguments after the string, they  are  assigned  to  the  positional  parameters,
+                 starting with $0.
+       -i        If the -i option is present, the shell is interactive.
+       -l        Make bash act as if it had been invoked as a login shell (see INVOCATION below).
+       -r        If  the  -r option is present, the shell becomes restricted (see RESTRICTED SHELL
+                 below).
+       -s        If the -s option is present, or if no arguments remain after  option  processing,
+                 then  commands  are  read  from the standard input.  This option allows the posi‐
+                 tional parameters to be set when invoking an interactive shell.
+       -D        A list of all double-quoted strings preceded by $ is printed on the standard out‐
+                 put.   These  are  the  strings that are subject to language translation when the
+                 current locale is not C or POSIX.  This implies the -n option; no  commands  will
+                 be executed.
+       [-+]O [shopt_option]
+                 shopt_option is one of the shell options accepted by the shopt builtin (see SHELL
+                 BUILTIN COMMANDS below).  If shopt_option is present, -O sets the value  of  that
+                 option;  +O  unsets it.  If shopt_option is not supplied, the names and values of
+                 the shell options accepted by shopt are printed on the standard output.   If  the
+                 invocation  option  is +O, the output is displayed in a format that may be reused
+                 as input.
+       --        A -- signals the end of options and  disables  further  option  processing.   Any
+                 arguments  after the -- are treated as filenames and arguments.  An argument of -
+                 is equivalent to --.
+
+       Bash also interprets a number of multi-character options.  These options must appear on the
+       command line before the single-character options to be recognized.
+
+       --debugger
+              Arrange  for  the debugger profile to be executed before the shell starts.  Turns on
+              extended debugging mode (see the description of the extdebug  option  to  the  shopt
+              builtin below).
+       --dump-po-strings
+              Equivalent  to  -D,  but  the output is in the GNU gettext po (portable object) file
+              format.
+       --dump-strings
+              Equivalent to -D.
+       --help Display a usage message on standard output and exit successfully.
+       --init-file file
+       --rcfile file
+              Execute commands from file instead of  the  standard  personal  initialization  file
+              ~/.bashrc if the shell is interactive (see INVOCATION below).
+
+       --login
+              Equivalent to -l.
+
+       --noediting
+              Do not use the GNU readline library to read command lines when the shell is interac‐
+              tive.
+
+       --noprofile
+              Do not read either the system-wide startup file /etc/profile or any of the  personal
+              initialization  files  ~/.bash_profile,  ~/.bash_login,  or ~/.profile.  By default,
+              bash reads these files when it is invoked as a login shell (see INVOCATION below).
+
+       --norc Do not read and execute the personal initialization file ~/.bashrc if the  shell  is
+              interactive.  This option is on by default if the shell is invoked as sh.
+
+       --posix
+              Change the behavior of bash where the default operation differs from the POSIX stan‐
+              dard to match the standard (posix mode).
+
+       --restricted
+              The shell becomes restricted (see RESTRICTED SHELL below).
+
+       --rpm-requires
+              Produce the list of files that are required for  the  shell  script  to  run.   This
+              implies  '-n'  and is subject to the same limitations as compile time error checking
+              checking; Command substitutions, Conditional expressions and eval  builtin  are  not
+              parsed so some dependencies may be missed.
+
+       --verbose
+              Equivalent to  -v.
+
+       --version
+              Show  version  information for this instance of bash on the standard output and exit
+              successfully.
+
+ARGUMENTS
+       If arguments remain after option processing, and neither the -c nor the -s option has  been
+       supplied, the first argument is assumed to be the name of a file containing shell commands.
+       If bash is invoked in this fashion, $0 is set to the name of the file, and  the  positional
+       parameters  are set to the remaining arguments.  Bash reads and executes commands from this
+       file, then exits.  Bash's exit status is the exit status of the last  command  executed  in
+       the  script.   If no commands are executed, the exit status is 0.  An attempt is first made
+       to open the file in the current directory, and,  if  no  file  is  found,  then  the  shell
+       searches the directories in PATH for the script.
+
+INVOCATION
+       A login shell is one whose first character of argument zero is a -, or one started with the
+       --login option.
+
+       An interactive shell is one started without non-option arguments and without the -c  option
+       whose  standard  input  and  error  are  both  connected  to  terminals  (as  determined by
+       isatty(3)), or one started with the -i option.  PS1 is set and $- includes  i  if  bash  is
+       interactive, allowing a shell script or a startup file to test this state.
+
+       The following paragraphs describe how bash executes its startup files.  If any of the files
+       exist but cannot be read, bash reports an error.  Tildes are  expanded  in  file  names  as
+       described below under Tilde Expansion in the EXPANSION section.
+
+       When  bash is invoked as an interactive login shell, or as a non-interactive shell with the
+       --login option, it first reads and executes commands from the file  /etc/profile,  if  that
+       file  exists.   After  reading  that file, it looks for ~/.bash_profile, ~/.bash_login, and
+       ~/.profile, in that order, and reads and executes commands from the first one  that  exists
+       and  is  readable.  The --noprofile option may be used when the shell is started to inhibit
+       this behavior.
+
+       When a login shell exits, bash reads and executes commands from  the  files  ~/.bash_logout
+       and /etc/bash.bash_logout, if the files exists.
+
+       When  an  interactive  shell  that is not a login shell is started, bash reads and executes
+       commands from ~/.bashrc, if that file exists.  This may be inhibited by  using  the  --norc
+       option.   The  --rcfile  file option will force bash to read and execute commands from file
+       instead of ~/.bashrc.
+
+       When bash is started non-interactively, to run a shell script, for example,  it  looks  for
+       the  variable  BASH_ENV in the environment, expands its value if it appears there, and uses
+       the expanded value as the name of a file to read and execute.  Bash behaves as if the  fol‐
+       lowing command were executed:
+              if [ -n "$BASH_ENV" ]; then . "$BASH_ENV"; fi
+       but the value of the PATH variable is not used to search for the file name.
+
+       If  bash  is invoked with the name sh, it tries to mimic the startup behavior of historical
+       versions of sh as closely as possible, while conforming to  the  POSIX  standard  as  well.
+       When  invoked  as  an  interactive login shell, or a non-interactive shell with the --login
+       option, it first attempts to read and execute commands from /etc/profile and ~/.profile, in
+       that  order.  The --noprofile option may be used to inhibit this behavior.  When invoked as
+       an interactive shell with the name sh, bash looks for the variable ENV, expands  its  value
+       if  it  is  defined, and uses the expanded value as the name of a file to read and execute.
+       Since a shell invoked as sh does not attempt to read and execute commands  from  any  other
+       startup files, the --rcfile option has no effect.  A non-interactive shell invoked with the
+       name sh does not attempt to read any other startup files.  When invoked as sh, bash  enters
+       posix mode after the startup files are read.
+
+       When bash is started in posix mode, as with the --posix command line option, it follows the
+       POSIX standard for startup files.  In this mode, interactive shells expand the ENV variable
+       and  commands  are  read  and  executed from the file whose name is the expanded value.  No
+       other startup files are read.
+
+       Bash attempts to determine when it is being run with its standard input connected to a net‐
+       work  connection,  as when executed by the remote shell daemon, usually rshd, or the secure
+       shell daemon sshd.  If bash determines it is being run in this fashion, it reads  and  exe‐
+       cutes commands from ~/.bashrc, if that file exists and is readable.  It will not do this if
+       invoked as sh.  The --norc option may be used to inhibit this behavior,  and  the  --rcfile
+       option may be used to force another file to be read, but rshd does not generally invoke the
+       shell with those options or allow them to be specified.
+
+       If the shell is started with the effective user (group) id  not  equal  to  the  real  user
+       (group)  id,  and the -p option is not supplied, no startup files are read, shell functions
+       are not inherited from the environment, the SHELLOPTS,  BASHOPTS,  CDPATH,  and  GLOBIGNORE
+       variables, if they appear in the environment, are ignored, and the effective user id is set
+       to the real user id.  If the -p option is supplied at invocation, the startup  behavior  is
+       the same, but the effective user id is not reset.
+
+DEFINITIONS
+       The following definitions are used throughout the rest of this document.
+       blank  A space or tab.
+       word   A  sequence of characters considered as a single unit by the shell.  Also known as a
+              token.
+       name   A word consisting only of alphanumeric characters  and  underscores,  and  beginning
+              with an alphabetic character or an underscore.  Also referred to as an identifier.
+       metacharacter
+              A character that, when unquoted, separates words.  One of the following:
+              |  & ; ( ) < > space tab
+       control operator
+              A token that performs a control function.  It is one of the following symbols:
+              || & && ; ;; ( ) | |& <newline>
+
+RESERVED WORDS
+       Reserved words are words that have a special meaning to the shell.  The following words are
+       recognized as reserved when unquoted and either the first word of  a  simple  command  (see
+       SHELL GRAMMAR below) or the third word of a case or for command:
+
+       ! case  do done elif else esac fi for function if in select then until while { } time [[ ]]
+
+SHELL GRAMMAR
+   Simple Commands
+       A simple command is a sequence of optional variable assignments followed by blank-separated
+       words and redirections, and terminated by a control operator.  The first word specifies the
+       command  to be executed, and is passed as argument zero.  The remaining words are passed as
+       arguments to the invoked command.
+
+       The return value of a simple command is its exit status, or 128+n if the command is  termi‐
+       nated by signal n.
+
+   Pipelines
+       A  pipeline is a sequence of one or more commands separated by one of the control operators
+       | or |&.  The format for a pipeline is:
+
+              [time [-p]] [ ! ] command [ [|⎪|&] command2 ... ]
+
+       The standard output of command is connected via a pipe to the standard input  of  command2.
+       This  connection  is  performed before any redirections specified by the command (see REDI‐
+       RECTION below).  If |& is used, the standard error of command is  connected  to  command2's
+       standard  input through the pipe; it is shorthand for 2>&1 |.  This implicit redirection of
+       the standard error is performed after any redirections specified by the command.
+
+       The return status of a pipeline is the exit status of the last command, unless the pipefail
+       option  is  enabled.   If pipefail is enabled, the pipeline's return status is the value of
+       the last (rightmost) command to exit with a non-zero status, or zero if all  commands  exit
+       successfully.   If  the reserved word !  precedes a pipeline, the exit status of that pipe‐
+       line is the logical negation of the exit status as described above.  The  shell  waits  for
+       all commands in the pipeline to terminate before returning a value.
+
+       If  the time reserved word precedes a pipeline, the elapsed as well as user and system time
+       consumed by its execution are reported when the pipeline terminates.  The -p option changes
+       the output format to that specified by POSIX.  When the shell is in posix mode, it does not
+       recognize time as a reserved word if the next token begins  with  a  `-'.   The  TIMEFORMAT
+       variable  may be set to a format string that specifies how the timing information should be
+       displayed; see the description of TIMEFORMAT under Shell Variables below.
+
+       When the shell is in posix mode, time may be followed by a  newline.   In  this  case,  the
+       shell  displays the total user and system time consumed by the shell and its children.  The
+       TIMEFORMAT variable may be used to specify the format of the time information.
+
+       Each command in a pipeline is executed as a separate process (i.e., in a subshell).
+
+   Lists
+       A list is a sequence of one or more pipelines separated by one of the operators ;,  &,  &&,
+       or ||, and optionally terminated by one of ;, &, or <newline>.
+
+       Of  these  list operators, && and || have equal precedence, followed by ; and &, which have
+       equal precedence.
+
+       A sequence of one or more newlines may appear in a list instead of a semicolon  to  delimit
+       commands.
+
+       If a command is terminated by the control operator &, the shell executes the command in the
+       background in a subshell.  The shell does not wait for  the  command  to  finish,  and  the
+       return  status  is 0.  Commands separated by a ; are executed sequentially; the shell waits
+       for each command to terminate in turn.  The return status is the exit status  of  the  last
+       command executed.
+
+       AND  and OR lists are sequences of one of more pipelines separated by the && and || control
+       operators, respectively.  AND and OR lists are executed with left  associativity.   An  AND
+       list has the form
+
+              command1 && command2
+
+       command2 is executed if, and only if, command1 returns an exit status of zero.
+
+       An OR list has the form
+
+              command1 || command2
+
+       command2  is  executed  if and only if command1 returns a non-zero exit status.  The return
+       status of AND and OR lists is the exit status of the last command executed in the list.
+
+   Compound Commands
+       A compound command is one of the following:
+
+       (list) list is executed in  a  subshell  environment  (see  COMMAND  EXECUTION  ENVIRONMENT
+              below).   Variable assignments and builtin commands that affect the shell's environ‐
+              ment do not remain in effect after the command completes.  The return status is  the
+              exit status of list.
+
+       { list; }
+              list  is  simply executed in the current shell environment.  list must be terminated
+              with a newline or semicolon.  This is known as a group command.  The  return  status
+              is  the  exit  status of list.  Note that unlike the metacharacters ( and ), { and }
+              are reserved words and must occur where a reserved word is permitted  to  be  recog‐
+              nized.   Since  they  do not cause a word break, they must be separated from list by
+              whitespace or another shell metacharacter.
+
+       ((expression))
+              The expression is evaluated according to the rules described below under  ARITHMETIC
+              EVALUATION.   If  the  value  of the expression is non-zero, the return status is 0;
+              otherwise the return status is 1.  This is exactly equivalent to let "expression".
+
+       [[ expression ]]
+              Return a status of 0 or 1 depending on the evaluation of the conditional  expression
+              expression.   Expressions are composed of the primaries described below under CONDI‐
+              TIONAL EXPRESSIONS.  Word splitting and pathname expansion are not performed on  the
+              words  between  the  [[  and  ]]; tilde expansion, parameter and variable expansion,
+              arithmetic expansion, command substitution, process substitution, and quote  removal
+              are  performed.   Conditional operators such as -f must be unquoted to be recognized
+              as primaries.
+
+              When used with [[, the < and > operators sort lexicographically  using  the  current
+              locale.
+
+              When  the  ==  and != operators are used, the string to the right of the operator is
+              considered a pattern and matched according to the rules described below  under  Pat‐
+              tern  Matching.   If the shell option nocasematch is enabled, the match is performed
+              without regard to the case of alphabetic characters.  The return value is 0  if  the
+              string  matches  (==) or does not match (!=) the pattern, and 1 otherwise.  Any part
+              of the pattern may be quoted to force it to be matched as a string.
+
+              An additional binary operator, =~, is available, with the same precedence as ==  and
+              !=.   When  it  is  used,  the  string to the right of the operator is considered an
+              extended regular expression and matched accordingly (as in  regex(3)).   The  return
+              value  is  0  if  the  string  matches the pattern, and 1 otherwise.  If the regular
+              expression is syntactically incorrect, the conditional expression's return value  is
+              2.   If  the  shell  option  nocasematch  is enabled, the match is performed without
+              regard to the case of alphabetic characters.  Any part of the pattern may be  quoted
+              to  force  it to be matched as a string.  Substrings matched by parenthesized subex‐
+              pressions  within  the  regular  expression  are  saved  in   the   array   variable
+              BASH_REMATCH.  The element of BASH_REMATCH with index 0 is the portion of the string
+              matching the entire regular expression.  The element of BASH_REMATCH with index n is
+              the portion of the string matching the nth parenthesized subexpression.
+
+              Expressions  may  be  combined  using  the following operators, listed in decreasing
+              order of precedence:
+
+              ( expression )
+                     Returns the value of expression.  This may be used  to  override  the  normal
+                     precedence of operators.
+              ! expression
+                     True if expression is false.
+              expression1 && expression2
+                     True if both expression1 and expression2 are true.
+              expression1 || expression2
+                     True if either expression1 or expression2 is true.
+
+              The  &&  and || operators do not evaluate expression2 if the value of expression1 is
+              sufficient to determine the return value of the entire conditional expression.
+
+       for name [ [ in [ word ... ] ] ; ] do list ; done
+              The list of words following in is expanded, generating a list of items.   The  vari‐
+              able  name  is  set  to each element of this list in turn, and list is executed each
+              time.  If the in word is omitted, the for command executes list once for each  posi‐
+              tional  parameter that is set (see PARAMETERS below).  The return status is the exit
+              status of the last command that executes.  If the expansion of the  items  following
+              in results in an empty list, no commands are executed, and the return status is 0.
+
+       for (( expr1 ; expr2 ; expr3 )) ; do list ; done
+              First, the arithmetic expression expr1 is evaluated according to the rules described
+              below under ARITHMETIC EVALUATION.  The arithmetic expression expr2 is  then  evalu‐
+              ated repeatedly until it evaluates to zero.  Each time expr2 evaluates to a non-zero
+              value, list is executed and the arithmetic expression expr3 is  evaluated.   If  any
+              expression  is omitted, it behaves as if it evaluates to 1.  The return value is the
+              exit status of the last command in list that is executed, or false  if  any  of  the
+              expressions is invalid.
+
+       select name [ in word ] ; do list ; done
+              The  list of words following in is expanded, generating a list of items.  The set of
+              expanded words is printed on the standard error, each preceded by a number.  If  the
+              in  word  is  omitted, the positional parameters are printed (see PARAMETERS below).
+              The PS3 prompt is then displayed and a line read from the standard  input.   If  the
+              line  consists  of  a  number  corresponding to one of the displayed words, then the
+              value of name is set to that word.  If the line is empty, the words and  prompt  are
+              displayed  again.   If  EOF  is  read,  the command completes.  Any other value read
+              causes name to be set to null.  The line read is saved in the variable  REPLY.   The
+              list  is  executed after each selection until a break command is executed.  The exit
+              status of select is the exit status of the last command executed in list, or zero if
+              no commands were executed.
+
+       case word in [ [(] pattern [ | pattern ] ... ) list ;; ] ... esac
+              A  case  command  first  expands word, and tries to match it against each pattern in
+              turn, using the same matching rules as for pathname expansion (see  Pathname  Expan‐
+              sion  below).   The  word  is expanded using tilde expansion, parameter and variable
+              expansion, arithmetic substitution, command substitution, process  substitution  and
+              quote  removal.   Each pattern examined is expanded using tilde expansion, parameter
+              and variable expansion, arithmetic substitution, command substitution,  and  process
+              substitution.   If  the  shell option nocasematch is enabled, the match is performed
+              without regard to the case of alphabetic characters.  When a  match  is  found,  the
+              corresponding  list  is executed.  If the ;; operator is used, no subsequent matches
+              are attempted after the first pattern match.  Using ;& in place of ;; causes  execu‐
+              tion  to continue with the list associated with the next set of patterns.  Using ;;&
+              in place of ;; causes the shell to test the next pattern list in the  statement,  if
+              any, and execute any associated list on a successful match.  The exit status is zero
+              if no pattern matches.  Otherwise, it is the exit status of the  last  command  exe‐
+              cuted in list.
+
+       if list; then list; [ elif list; then list; ] ... [ else list; ] fi
+              The  if  list  is  executed.  If its exit status is zero, the then list is executed.
+              Otherwise, each elif list is executed in turn, and if its exit status is  zero,  the
+              corresponding  then list is executed and the command completes.  Otherwise, the else
+              list is executed, if present.  The exit status is the exit status of the  last  com‐
+              mand executed, or zero if no condition tested true.
+
+       while list-1; do list-2; done
+       until list-1; do list-2; done
+              The  while command continuously executes the list list-2 as long as the last command
+              in the list list-1 returns an exit status of zero.  The until command  is  identical
+              to the while command, except that the test is negated; list-2 is executed as long as
+              the last command in list-1 returns a non-zero exit status.  The exit status  of  the
+              while  and until commands is the exit status of the last command executed in list-2,
+              or zero if none was executed.
+
+   Coprocesses
+       A coprocess is a shell command preceded by the coproc reserved word.  A coprocess  is  exe‐
+       cuted  asynchronously  in a subshell, as if the command had been terminated with the & con‐
+       trol operator, with a two-way pipe established between the executing shell and  the  copro‐
+       cess.
+
+       The format for a coprocess is:
+
+              coproc [NAME] command [redirections]
+
+       This  creates a coprocess named NAME.  If NAME is not supplied, the default name is COPROC.
+       NAME must not be supplied if command is a simple command  (see  above);  otherwise,  it  is
+       interpreted  as  the  first  word  of the simple command.  When the coproc is executed, the
+       shell creates an array variable (see Arrays below) named NAME in the context of the execut‐
+       ing  shell.  The standard output of command is connected via a pipe to a file descriptor in
+       the executing shell, and that file descriptor is assigned to NAME[0].  The  standard  input
+       of  command  is  connected via a pipe to a file descriptor in the executing shell, and that
+       file descriptor is assigned to NAME[1].  This pipe is established before  any  redirections
+       specified  by the command (see REDIRECTION below).  The file descriptors can be utilized as
+       arguments to shell commands and redirections using standard word expansions.   The  process
+       ID  of the shell spawned to execute the coprocess is available as the value of the variable
+       NAME_PID.  The wait builtin command may be used to wait for the coprocess to terminate.
+
+       The return status of a coprocess is the exit status of command.
+
+   Shell Function Definitions
+       A shell function is an object that is called like a simple command and executes a  compound
+       command with a new set of positional parameters.  Shell functions are declared as follows:
+
+       name () compound-command [redirection]
+       function name [()] compound-command [redirection]
+              This defines a function named name.  The reserved word function is optional.  If the
+              function reserved word is supplied, the parentheses are optional.  The body  of  the
+              function  is  the  compound  command compound-command (see Compound Commands above).
+              That command is usually a list of commands between { and }, but may be  any  command
+              listed under Compound Commands above.  compound-command is executed whenever name is
+              specified as the name of a simple command.  Any redirections (see REDIRECTION below)
+              specified  when  a  function is defined are performed when the function is executed.
+              The exit status of a function definition is zero unless a syntax error occurs  or  a
+              readonly function with the same name already exists.  When executed, the exit status
+              of a function is the exit status of the last command executed  in  the  body.   (See
+              FUNCTIONS below.)
+
+COMMENTS
+       In  a  non-interactive  shell,  or  an  interactive shell in which the interactive_comments
+       option to the shopt builtin is enabled (see SHELL BUILTIN COMMANDS below), a word beginning
+       with # causes that word and all remaining characters on that line to be ignored.  An inter‐
+       active shell without the interactive_comments option enabled does not allow comments.   The
+       interactive_comments option is on by default in interactive shells.
+
+QUOTING
+       Quoting  is used to remove the special meaning of certain characters or words to the shell.
+       Quoting can be used to  disable  special  treatment  for  special  characters,  to  prevent
+       reserved words from being recognized as such, and to prevent parameter expansion.
+
+       Each  of the metacharacters listed above under DEFINITIONS has special meaning to the shell
+       and must be quoted if it is to represent itself.
+
+       When the command history expansion facilities are being used (see HISTORY EXPANSION below),
+       the history expansion character, usually !, must be quoted to prevent history expansion.
+
+       There are three quoting mechanisms: the escape character, single quotes, and double quotes.
+
+       A  non-quoted backslash (\) is the escape character.  It preserves the literal value of the
+       next character that follows, with  the  exception  of  <newline>.   If  a  \<newline>  pair
+       appears,  and  the backslash is not itself quoted, the \<newline> is treated as a line con‐
+       tinuation (that is, it is removed from the input stream and effectively ignored).
+
+       Enclosing characters in single quot

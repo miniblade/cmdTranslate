@@ -1,0 +1,1208 @@
+PS（1）用户命令PS（1）
+
+
+
+名称
+       ps  - 报告当前进程的快照。
+
+概要
+       ps [选项]
+
+描述
+       ps显示有关选择的活动进程的信息。如果
+       您想要重复更新选择和显示
+       信息，请改用top（1）。
+
+       此版本的ps接受以下几种选项：
+
+       1个UNIX选项，可以分组，并且必须以破折号开头。
+       2个BSD选项，可以分组，不得与破折号一起使用。
+       3个GNU长选项，前面有两个破折号。
+
+       不同类型的选项可以自由混合，但冲突可以
+       出现。有一些同义选项，在功能上
+       相同，由于许多标准和ps实现这一点
+       ps兼容。
+
+       请注意，“ps -aux”与“ps aux”不同。 POSIX和UNIX
+       标准要求“ps -aux”打印用户拥有的所有进程
+       命名为“x”，以及打印将被选中的所有进程
+       -a选项。如果名为“x”的用户不存在，则此ps可能
+       将命令解释为“ps aux”而是打印警告。这个
+       行为旨在帮助过渡旧脚本和习惯。
+       它很脆弱，可能会有变化，因此不应该依赖它。
+
+       默认情况下，ps选择具有相同有效用户ID的所有进程
+       （euid = EUID）作为当前用户并与同一终端相关联
+       作为调用者。它显示进程ID（pid = PID），终端
+       与进程相关联（tname = TTY），累计CPU时间
+       [DD-] hh：mm：ss格式（time = TIME）和可执行文件名（ucmd = CMD）。
+       默认情况下，输出未排序。
+
+       使用BSD样式选项会将进程状态（stat = STAT）添加到
+       默认显示并显示命令args（args = COMMAND）而不是
+       可执行名称。您可以使用PS_FORMAT环境覆盖它
+       变量。使用BSD风格的选项也会改变这个过程
+       选择包括所拥有的其他终端（TTY）上的进程
+       由你;或者，这可以被描述为将选择设置为
+       是过滤以排除所拥有的进程的所有进程的集合
+       其他用户或不在终端上。不考虑这些影响
+       当选项被描述为下面的“相同”时，所以-M将是
+       被认为与Z相同，等等。
+
+       除以下描述外，过程选择选项是附加的。该
+       将丢弃默认选择，然后选择所选进程
+       添加到要显示的进程集。因此，一个过程将是
+       如果它符合任何给定的选择标准，则显示。
+
+例子
+       要使用标准语法查看系统上的每个进程：
+          ps -e
+          ps -ef
+          ps -eF
+          ps -ely
+
+       要使用BSD语法查看系统上的每个进程：
+          ps ax
+          ps axu
+
+       要打印进程树：
+          ps -ejH
+          ps axjf
+
+       要获取有关线程的信息：
+          ps -eLf
+          ps axms
+
+       获取安全信息：
+          ps -eo euser，ruser，suser，fuser，f，comm，label
+          ps axZ
+          ps -eM
+
+       在用户中查看以root身份运行的每个进程（真实和有效ID）
+       格式：
+          ps -U root -u root u
+
+       要使用用户定义的格式查看每个进程：
+          ps -eo pid，tid，class，rtprio，ni，pri，psr，pcpu，stat，wchan：14，comm
+          ps axo stat，euid，ruid，tty，tpgid，sess，pgrp，ppid，pid，pcpu，comm
+          ps -Ao pid，tt，user，fname，tmout，f，wchan
+
+       仅打印syslogd的进程ID：
+          ps -C syslogd -o pid =
+
+       仅打印PID 42的名称：
+          ps -q 42 -o comm =
+
+简单的过程选择
+       a解除BSD风格的“仅限你自己”的限制
+              在一些BSD风格的所有进程的集合（没有“ - ”）
+              使用选项或ps个性设置类似于BSD。
+              以这种方式选择的一组过程是另外的
+              通过其他方式选择的一组过程。另类
+              description是这个选项导致ps列出所有进程
+              使用终端（tty），或在使用时列出所有进程
+              与x选项一起使用。
+
+       -A选择所有进程。与-e相同。
+
+       -a选择除两个会话负责人之外的所有进程（请参阅getsid（2））
+              和与终端无关的进程。
+
+       -d选择除会话负责人以外的所有进程。
+
+       --deselect
+              选择除满足指定的进程以外的所有进程
+              条件（否定选择）。与-N相同。
+
+       -e选择所有进程。与-A相同。
+
+       g真的是所有的，甚至是会议领导者。这个标志已经过时了
+              在将来的版本中停止使用。它通常暗示着
+              一个标志，仅在sunos4中运行时才有用
+              个性。
+
+       -N选择除满足指定的进程以外的所有进程
+              条件（否定选择）。与--deselect相同。
+
+       T选择与此终端关联的所有进程。相同
+              没有任何参数的t选项。
+
+       r将选择限制为仅运行进程。
+
+       x提升BSD风格的“必须有tty”限制，即
+              一些BSD风格强加于所有进程的集合
+              （没有“ - ”）选项使用或当ps个性
+              设置类似于BSD。在此选择的一组进程
+              方式是由其他人选择的一组进程的补充
+              手段。另一种描述是该选项导致ps
+              列出您拥有的所有进程（与ps相同的EUID）或列出
+              与a选项一起使用时的所有进程。
+
+按列表选择过程
+       这些选项以空格分隔的形式接受单个参数
+       或以逗号分隔的列表。它们可以多次使用。对于
+       例如：ps -p“1 2”-p 3,4
+
+       -123与--pid 123相同。
+
+       123与--pid 123相同。
+
+       -C cmdlist
+              按命令名称选择。这将选择其进程
+              可执行文件名称在cmdlist中给出。
+
+       -G grplist
+              按实际组ID（RGID）或名称选择。这选择了
+              实际组名称或ID在grplist列表中的进程。
+              真实组ID标识创建的用户组
+              这个过程，请参阅getgid（2）。
+
+       -g grplist
+              按会话或有效组名选择。选择
+              会话由许多标准指定，但选择依据
+              有效群体是其他几个人的逻辑行为
+              操作系统使用。这个ps会在会话时选择
+              list是完全数字的（如会话所示）。组ID号
+              仅在指定了某些组名时才会起作用。看到
+              -s和--group选项。
+
+       --Group grplist
+              按实际组ID（RGID）或名称选择。与-G相同。
+
+       --group grplist
+              按有效组ID（EGID）或名称选择。这选择了
+              有效组名称或ID在grplist中的进程。该
+              有效组ID描述其文件访问权限的组
+              权限由进程使用（请参阅getegid（2））。 -g
+              选项通常是--group的替代选项。
+
+       p plist
+              按进程ID选择。与-p和--pid相同。
+
+       -p pidlist
+              按PID选择。这将选择进程ID的进程
+              数字出现在pidlist中。与p和--pid相同。
+
+       --pid pidlist
+              按进程ID选择。与-p和p相同。
+
+       --ppid pidlist
+              按父进程ID选择。这用a选择进程
+              pidlist中的父进程ID。也就是说，它选择进程
+              这是pidlist中列出的孩子的孩子。
+
+       q pidlist
+              按进程ID（快速模式）选择。与-q和。相同
+              --quick-PID。
+
+       -q pidlist
+              按PID选择（快速模式）。这将选择其进程
+              进程ID号出现在pidlist中。使用此选项ps读取
+              仅适用于pidlist中列出的pids的必要信息
+              不适用其他过滤规则。 pids的顺序是
+              未分类和保存。没有其他选择选项，排序
+              此模式允许使用和林类型列表。相同
+              q和--quick-pid。
+
+        - 快速pid pidlist
+              按进程ID（快速模式）选择。与-q和q相同。
+
+       -s sesslist
+              按会话ID选择。这将选择具有会话的进程
+              sesslist中指定的ID。
+
+       --sid sesslist
+              按会话ID选择。与-s相同。
+
+       t ttylist
+              按tty选择。几乎与-t和--tty相同，但也可以
+              与空的ttylist一起使用以指示终端
+              与ps相关联。使用T选项被认为更清洁
+              而使用t与空的ttylist。
+
+       -t ttylist
+              按tty选择。这将选择与之关联的进程
+              在ttylist中给出的终端。终端（ttys或屏幕）
+              文本输出）可以用几种形式指定：/ dev / ttyS1，
+              ttyS1，S1。可以使用简单的“ - ”来选择进程
+              附在任何终端上。
+
+        -  ttylist
+              按终端选择。与-t和t相同。
+
+       U用户列表
+              按有效用户ID（EUID）或名称选择。这选择了
+              有效用户名或ID在用户列表中的进程。该
+              有效用户ID描述其文件访问权限的用户
+              权限由进程使用（请参阅geteuid（2））。相同
+              到-u和--user。
+
+       -U用户列表
+              按真实用户ID（RUID）或名称选择。它选择进程
+              其真实用户名或ID在用户列表中。真的
+              用户标识标识创建过程的用户，请参阅
+              的getuid（2）。
+
+       -u用户列表
+              按有效用户ID（EUID）或名称选择。这选择了
+              有效用户名或ID在用户列表中的进程。
+
+              有效用户ID描述了其文件访问权限的用户
+              权限由进程使用（请参阅geteuid（2））。相同
+              到U和--user。
+
+        - 用户列表
+              按真实用户ID（RUID）或名称选择。与-U相同。
+
+       --user userlist
+              按有效用户ID（EUID）或名称选择。与-u和。相同
+              U.
+
+输出格式控制
+       这些选项用于选择ps显示的信息。该
+       输出可能因人格而异。
+
+       -c显示-l选项的不同调度程序信息。
+
+       --context
+              显示安全上下文格式（适用于SELinux）。
+
+       -f执行全格式列表。此选项可与许多组合使用
+              其他UNIX样式选项，用于添加其他列。它也是
+              导致打印命令参数。与-L一起使用时，
+              NLWP（线程数）和LWP（线程ID）列将是
+              添加。请参阅c选项，format关键字args和
+              format keyword comm。
+
+       -F额外的完整格式。请参阅-F选项，-F表示。
+
+        - 格式化格式
+              用户定义的格式。与-o和o相同。
+
+       j BSD作业控制格式。
+
+       -j乔布斯格式。
+
+       l显示BSD长格式。
+
+       -l长格式。 -y选项通常对此有用。
+
+       -M添加一列安全数据。与Z相同（对于SELinux）。
+
+       O格式
+              预加载o（重载）。 BSD O选项可以像-O一样工作
+              （用户定义的输出格式，预定义了一些常用字段）
+              或者可以用于指定排序顺序。启发式习惯用于
+              确定此选项的行为。确保了
+              获得所需的行为（排序或格式化），指定
+              以其他方式选择（例如使用-O或--sort）。什么时候
+              用作格式化选项，与BSD相同，与-O相同
+              个性。
+
+       -O格式
+              像-o一样，但预先加载了一些默认列。相同
+              -o pid，format，state，tname，time，command or -o pid，format，tname，
+              时间，cmd，请参阅下面的-o。
+
+       o格式
+              指定用户定义的格式。与-o和--format相同。
+
+       -o格式
+              用户定义的格式。 format是单个参数的形式
+              空格分隔或以逗号分隔的列表，提供了一种方法
+              指定单个输出列。认可的关键字是
+              在下面的STANDARD FORMAT SPECIFIERS部分中描述。
+              标题可以重命名（ps -o pid，ruser = RealUser -o
+              comm = Command）。如果所有列标题都为空（ps
+              -o pid = -o comm =）然后不输出标题行。
+              宽标头的列宽将根据需要增加;这可能
+              用于扩大WCHAN等列（ps -o pid，wchan = WIDE-
+              WCHAN-COLUMN -o comm）。显式宽度控制（ps opid，
+              wchan：42，cmd）也提供。 ps -o pid的行为= X，
+              comm = Y因人格而异;输出可以是一列命名
+              “X，comm = Y”或两列名为“X”和“Y”。使用多个-o
+              有疑问的选择。使用PS_FORMAT环境变量
+              根据需要指定默认值; DefSysV和DefBSD是宏
+              可用于选择默认的UNIX或BSD列。
+
+       s显示信号格式。
+
+       u显示面向用户的格式。
+
+       v显示虚拟内存格式。
+
+       X注册格式。
+
+       -y不要出示旗帜;显示rss代替addr。这个选项可以
+              仅与-l一起使用。
+
+       Z添加一列安全数据。与-M相同（对于SELinux）。
+
+输出修改器
+       c显示真实的命令名称。这是源于名称
+              可执行文件，而不是argv值。命令
+              因此，没有显示参数和对它们的任何修改。
+              此选项有效地将args格式关键字转换为
+              comm格式关键字;它对-f格式选项很有用
+              具有各种BSD风格的格式选项，这些都是正常的
+              显示命令参数。请参阅-f选项，格式
+              关键字args和格式关键字comm。
+
+       --cols n
+              设置屏幕宽度。
+
+       --columns n
+              设置屏幕宽度。
+
+       --cumulative
+              包括一些死子进程数据（作为与父进程的总和）。
+
+       e在命令后显示环境。
+
+       f ASCII艺术流程层次结构（林）。
+
+        - 森林
+              ASCII艺术流程树。
+
+       h没有标题。 （或者，BSD个性中每个屏幕一个标题）。
+              h选项有问题。标准BSD ps使用此选项
+              在每个输出页面上打印一个标题，但是旧的Linux ps
+              使用此选项可完全禁用标头。这个版本
+              ps遵循Linux不使用打印标题的用法，除非
+              已经选择了BSD个性，在这种情况下它会打印出来
+              每页输出的标题。无论目前如何
+              个性，你可以使用长期选项 - 头和
+              --no-headers以启用每页打印标题或禁用
+              标题完全分别。
+
+       -H显示进程层次结构（林）。
+
+       --headers
+              重复标题行，每页输出一个。
+
+       k spec指定排序顺序。排序语法是
+              [+ |  - ]键，[[+ |  - ]键[，...]]。从中选择一个多字母键
+              标准格式说明符部分。 “+”是可选的
+              默认方向是增加数字或词典
+              订购。与--sort相同。
+
+                      例子：
+                      ps jaxkuid，-ppid，+ pid
+                      ps axk comm o comm，args
+                      ps kstart_time -ef
+
+        - 线路
+              设置屏幕高度。
+
+       -n名单
+              设置名单文件。与N相同。需要名单文件
+              用于正确的WCHAN显示，并且必须与当前的Linux匹配
+              内核完全正确输出。没有这个选项，
+              名单的默认搜索路径是：
+
+                      $ PS_SYSMAP
+                      $ PS_SYSTEM_MAP
+                      的/ proc / * / WCHAN
+                      /boot/System.map-$(uname-r）
+                      /boot/System.map
+                      / lib / modules / $（uname -r）/System.map
+                      /usr/src/linux/System.map
+                      /System.map
+
+       n WCHAN和USER的数字输出（包括所有类型的UID
+              和GID）。
+
+       N名单
+              指定名称列表文件。与-n相同，请参阅上面的-n。
+
+       --no-头
+              根本不打印标题行。 --no-heading是此的别名
+              选项。
+
+       订单
+              排序顺序（重载）。 BSD O选项可以像-O一样工作
+              （用户定义的输出格式，预定义了一些常用字段）
+              或者可以用于指定排序顺序。启发式习惯用于
+              确定此选项的行为。确保了
+              获得所需的行为（排序或格式化），指定
+              以其他方式选择（例如使用-O或--sort）。
+
+              对于排序，过时的BSD O选项语法是
+              Ø[+ |  - ] K1 [[+ |  - ] K2 [，...]]。它命令进程列表
+              根据序列指定的多级排序
+              在OBSOLETE SORT中描述的单字母短按键k1，k2，....
+              以下是KEYS部分。 “+”目前仅是可选的
+              重新迭代键上的默认方向，但可能会有所帮助
+              将O排序与O格式区分开来。 “ - ”反转
+              方向只在它前面的钥匙上。
+
+        -  n
+              设置屏幕高度。
+
+       S从死孩子中总结一些信息，例如CPU使用率
+              进入他们的父母。这对于检查a非常有用
+              父进程一再重复短暂的系统
+              孩子们去做工作。
+
+        - 排序规格
+              指定排序顺序。排序语法是
+              [+ |  - ]键，[[+ |  - ]键[，...]]。从中选择一个多字母键
+              标准格式说明符部分。 “+”是可选的
+              默认方向是增加数字或词典
+              订购。与k相同。例如：ps jax --sort = uid，-ppid，
+              + PID
+
+       w宽输出。两次使用此选项可获得无限宽度。
+
+       -w宽输出。两次使用此选项可获得无限宽度。
+
+       --width n
+              设置屏幕宽度。
+
+线程显示
+       H将线程显示为进程。
+
+       -L显示线程，可能包含LWP和NLWP列。
+
+       m在进程后显示线程。
+
+       -m在进程后显示线程。
+
+       -T显示线程，可能带有SPID列。
+
+其他信息
+       --help部分
+              打印帮助信息。 section参数可以是其中之一
+              简单，列表，输出，线程，misc或全部。争论可以是
+              缩写为带下划线的字母之一，如：s | l | o | t | m | a。
+
+       --info打印调试信息。
+
+       L列出所有格式说明符。
+
+       V打印procps-ng版本。
+
+       -V打印procps-ng版本。
+
+        - 版
+              打印procps-ng版本。
+
+笔记
+       这个ps的工作原理是读取/ proc中的虚拟文件。这个ps没有
+       需要setuid kmem或具有任何运行权限。不要这样
+       ps任何特殊权限。
+
+       此ps需要访问名称列表数据才能显示正确的WCHAN。对于
+       在2.6之前的内核中，必须安装System.map文件。
+
+       CPU使用率目前表示为花费的时间百分比
+       在流程的整个生命周期中运行。这不理想，
+       并且它不符合ps否则符合的标准。
+       CPU使用率不太可能达到100％。
+
+       SIZE和RSS字段不计算某个过程的某些部分，包括
+       页表，内核堆栈，struct thread_info和struct
+       task_struct中。这通常至少是20 KiB的内存
+       居民。 SIZE是进程的虚拟大小（代码+数据+堆栈）。
+
+       标记为<defunct>的进程是死进程（所谓的“僵尸”）
+       仍然是因为他们的父母没有正确地摧毁他们。
+       如果父进程，init（8）将销毁这些进程
+       退出。
+
+       如果用户名的长度大于显示的长度
+       列，显示数字用户ID。
+
+       不建议使用ps -aux等命令选项，因为它是a
+       两种不同标准的混淆。根据POSIX和UNIX
+       标准，上面的命令要求显示具有TTY的所有进程
+       （通常是用户正在运行的命令）以及所拥有的所有进程
+       名为“x”的用户。如果该用户不存在，则ps将假设您
+       真的意思是“ps aux”。
+
+过程标志
+       这些值的总和显示在“F”列中，即
+       由flags输出说明符提供：
+
+               1分叉但没有执行
+               4使用超级用户权限
+
+处理状态代码
+       以下是s，stat和state输出的不同值
+       说明符（标题“STAT”或“S”）将显示以描述状态
+       一个过程：
+
+               D不间断睡眠（通常是IO）
+               R正在运行或可运行（在运行队列中）
+               S可中断睡眠（等待事件完成）
+               T由作业控制信号停止
+               在跟踪期间由调试器停止
+               W分页（自2.6.xx内核以来无效）
+               X死了（绝不应该看到）
+               Z已解散（“僵尸”）进程，终止但未被收获
+                    它的父母
+
+       对于BSD格式以及使用stat关键字时，需要额外的
+       可能会显示字符：
+
+               <高优先级（对其他用户不好）
+               N低优先级（对其他用户不错）
+               L将页面锁定到内存中（用于实时和自定义IO）
+               s是会议领导者
+               l是多线程的（使用CLONE_THREAD，就像NPTL pthreads一样
+                    做）
+               +位于前台进程组中
+
+已过时的排序钥匙
+       这些密钥由BSD O选项使用（当它用于排序时）。
+       GNU --sort选项不使用这些键，而是使用说明符
+       下面在STANDARD FORMAT SPECIFIERS部分中描述。注意
+       排序中使用的值是ps使用的内部值，而不是
+       某些输出格式字段中使用的“cooked”值（例如，排序）
+       on tty将分类为设备号，而不是根据终端名称
+       显示）。如果需要，将ps输出管道输入sort（1）命令
+       对煮熟的值进行排序。
+
+       关键的长篇描述
+       c cmd可执行文件的简单名称
+       C pcpu cpu利用率
+       f标记标志，如长格式F字段
+       g pgrp进程组ID
+       G tpgid控制tty进程组ID
+       j cutime累计用户时间
+       J cstime累积系统时间
+       用户时间
+       m min_flt次要页面错误的数量
+       M maj_flt主要页面错误的数量
+       n cmin_flt累积次要页面错误
+       N cmaj_flt累积主要页面错误
+       o会话会话ID
+       p pid进程ID
+       P ppid父进程ID
+       r rss常驻集大小
+       R居民居民页面
+       大小的内存大小，以千字节为单位
+       共享页面的共享量
+       t tty控制tty的设备号
+       T start_time时间过程开始
+       使用用户ID号
+       你的用户名
+       v vsize以VM为单位的总VM大小
+       y优先级内核调度优先级
+
+AIX FORMAT DESCRIPTORS
+       这个ps支持AIX格式描述符，它的工作方式有点像
+       printf（1）和printf（3）的格式代码。例如，正常
+       可以使用以下命令生成默认输出：ps -eo“％p％y％x％c”。该
+       正常代码将在下一节中介绍。
+
+       代码正常标题
+       ％C pcpu％CPU
+       ％G组GROUP
+       ％P ppid PPID
+       ％U用户USER
+       ％a args命令
+       ％c comm COMMAND
+       ％g rgroup RGROUP
+       ％n好NI
+       ％p pid PID
+       ％r pgid PGID
+       已经过了时间
+       ％u ruser RUSER
+       ％x时间TIME
+       ％Tty TTY
+
+       ％z vsz VSZ
+
+标准格式规范
+       以下是可用于控制输出的不同关键字
+       格式（例如使用选项-o）或使用选项进行排序
+       GNU风格 - 排序选项。
+
+       例如：ps -eo pid，user，args --sort user
+
+       此版本的ps尝试识别中使用的大多数关键字
+       ps的其他实现。
+
+       以下用户定义的格式说明符可能包含空格：
+       args，cmd，comm，command，fname，ucmd，ucomm，lstart，bsdstart，start。
+
+       某些关键字可能无法进行排序。
+
+
+       代码标题说明
+
+       ％cpu％“##。＃”格式的进程CPU CPU利用率。
+                             目前，它是使用的CPU时间除以
+                             进程运行的时间
+                             （cputime / realtime ratio），表示为
+                             百分比。除非是，否则不会加起来为100％
+                             你很幸运。 （别名pcpu）。
+
+       进程的驻留集大小的％mem％MEM比率
+                             机器上的物理内存，表示为
+                             百分比。 （别名pmem）。
+
+       args COMMAND命令，其所有参数都是字符串。
+                             可以显示对参数的修改。该
+                             此列中的输出可能包含空格。一个
+                             标记<defunct>的过程部分死亡，等待
+                             被其父母完全摧毁。有时
+                             流程args将不可用;当这个
+                             发生，ps将改为打印可执行文件
+                             括号中的名字。 （别名cmd，命令）。看到
+                             comm格式关键字，-f选项和
+                             c选项。
+                             最后指定时，此列将扩展为
+                             显示器的边缘。如果ps无法确定
+                             显示宽度，与重定向输出时一样
+                             （管道）进入文件或其他命令，
+                             输出宽度未定义（可能是80，
+                             无限制，由TERM变量决定，和
+                             等等）。 COLUMNS环境变量或
+                             --cols选项可用于准确确定
+                             这种情况下的宽度。 w或-w选项可以
+                             也可用于调整宽度。
+
+       阻塞阻塞信号的BLOCKED掩码，见信号（7）。
+                             根据场的宽度，一个32或
+                             显示十六进制格式的64位掩码。
+                             （别名sig_block，sigmask）。
+
+       bsdstart命令启动的START时间。如果这个过程是
+                             开始不到24小时前的输出格式
+                             是“HH：MM”，否则是“Mmm：SS”（Mmm是
+                             这个月的三个字母）。也可以看看
+                             lstart，start，start_time和stime。
+
+       bsdtime TIME累计cpu时间，用户+系统。显示器
+                             格式通常是“MMM：SS”，但可以转移到
+                             如果该过程使用超过999的权利
+                             分钟的CPU时间。
+
+
+       c C处理器利用率。目前，这是
+                             使用百分比的整数值
+                             这个过程的生命周期。 （见％cpu）。
+
+       捕获了捕获信号的CAUGHT掩码，见信号（7）。
+                             根据场的宽度，一个32或64
+                             显示十六进制格式的位掩码。
+                             （别名sig_catch，sigcatch）。
+
+       cgroup CGROUP显示控制组的进程
+                             所属。
+
+       类CLS调度类的进程。 （别名
+                             政策，cls）。 Field的可能值包括：
+
+                                       - 没有报道
+                                      TS SCHED_OTHER
+                                      FF SCHED_FIFO
+                                      RR SCHED_RR
+                                      B SCHED_BATCH
+                                      ISO SCHED_ISO
+                                      IDL SCHED_IDLE
+                                      ？未知的价值
+
+       cls CLS调度类的进程。 （别名
+                             政策，cls）。 Field的可能值包括：
+
+                                       - 没有报道
+                                      TS SCHED_OTHER
+                                      FF SCHED_FIFO
+                                      RR SCHED_RR
+                                      B SCHED_BATCH
+                                      ISO SCHED_ISO
+                                      IDL SCHED_IDLE
+                                      ？未知的价值
+
+       cmd CMD见args。 （别名args，命令）。
+
+       comm COMMAND命令名（仅可执行文件名）。
+                             不会修改命令名称
+                             所示。标记<defunct>的过程部分是
+                             死了，等待被它完全摧毁
+                             家长。此列中的输出可能包含
+                             空间。 （别名ucmd，ucomm）。另见args
+                             format关键字，-f选项和c选项。
+                             最后指定时，此列将扩展为
+                             显示器的边缘。如果ps无法确定
+                             显示宽度，与重定向输出时一样
+                             （管道）进入文件或其他命令，
+                             输出宽度未定义（可能是80，
+                             无限制，由TERM变量决定，和
+                             等等）。 COLUMNS环境变量或
+                             --cols选项可用于准确确定
+                             这种情况下的宽度。 w或-w选项可以
+                             也可用于调整宽度。
+
+       命令COMMAND参见args。 （别名args，命令）。
+
+       cp CP每磨（百分之几）CPU使用率。 （看到
+                             ％中央处理器）。
+
+       cputime TIME累计CPU时间，“[DD-] hh：mm：ss”格式。
+                             （别名时间）。
+
+       drs DRS数据驻留集大小，物理量
+                             专用于可执行代码以外的内存。
+
+
+
+       egid EGID进程的有效组ID号
+                             十进制整数。 （别名gid）。
+
+       egroup EGROUP进程的有效组ID。这将会
+                             文本组ID，如果可以获得和
+                             字段宽度允许或小数
+                             否则表示。 （别名组）。
+
+       eip EIP指令指针。
+
+       esp ESP堆栈指针。
+
+       etime ELAPSED自流程启动以来经过的时间
+                             形式[[DD-] hh：] mm：ss。
+
+       etimes ELAPSED自进程开始以来经过的时间
+                             秒。
+
+       euid EUID有效用户ID（别名uid）。
+
+       euser EUSER有效用户名。这将是文字
+                             用户ID，如果可以获得和字段
+                             宽度允许或十进制表示
+                             除此以外。 n选项可用于强制
+                             十进制表示。 （别名uname，用户）。
+
+       f与进程关联的F标志，请参阅
+                             PROCESS FLAGS部分。 （别名旗帜，旗帜）。
+
+       fgid FGID文件系统访问组ID。 （别名fsgid）。
+
+       fgroup FGROUP文件系统访问组ID。这将是
+                             文本组ID，如果可以获得和
+                             字段宽度允许或十进制表示
+                             除此以外。 （别名fsgroup）。
+
+       国旗F见f。 （别名f，标志）。
+
+       标志F见f。 （别名f，旗帜）。
+
+       fname命令进程的基本名称的前8个字节
+                             可执行文件。此列中的输出可能
+                             包含空格。
+
+       fuid FUID文件系统访问用户ID。 （别名fsuid）。
+
+       fuser FUSER文件系统访问用户ID。这将是
+                             文本用户ID，如果可以获得和
+                             字段宽度允许或十进制表示
+                             除此以外。
+
+       gid GID见egid。 （别名egid）。
+
+       group GROUP见egroup。 （别名egroup）。
+
+       忽略忽略信号的IGNORED掩码，见signal（7）。
+                             根据场的宽度，一个32或64
+                             显示十六进制格式的位掩码。
+                             （别名sig_ignore，sigignore）。
+
+       ipcns IPCNS描述命名空间的唯一inode编号
+                             过程属于。请参阅命名空间（7）。
+
+       标签LABEL安全标签，最常用于SELinux
+                             上下文数据。这是强制访问
+                             在高安全性系统上找到控制（“MAC”）。
+
+
+
+       lstart命令启动的STARTED时间。也可以看看
+                             bsdstart，start，start_time和stime。
+
+       lsession SESSION显示a的登录会话标识符
+                             进程，如果已包含systemd支持。
+
+       lwp LWP轻量级进程（线程）的ID
+                             可调度实体（别名spid，tid）。见tid
+                             了解更多信息。
+
+       machine MACHINE显示分配的进程的机器名称
+                             如果是systemd支持，则为VM或容器
+                             包括在内。
+
+       maj_flt MAJFLT主要页面错误的数量
+                             这个过程发生了。
+
+       min_flt MINFLT具有的次要页面错误的数量
+                             这个过程发生了。
+
+       mntns MNTNS描述命名空间的唯一inode编号
+                             过程属于。请参阅命名空间（7）。
+
+       netns NETNS描述命名空间的唯一inode编号
+                             过程属于。请参阅命名空间（7）。
+
+       妮妮很有价值。范围从19（最好）到-20
+                             （对别人不好），看得好（1）。 （别名很好）。
+
+       好NI见ni。（别名ni）。
+
+       nlwp NLWP进程中的lwps（线程）数。 （别名
+                             thcount）。
+
+       nwchan WCHAN地址函数所在的内核函数
+                             正在睡觉（如果你想要内核，请使用wchan）
+                             功能名称）。运行任务将显示一个
+                             此列中的破折号（' - '）。
+
+       ouid OWNER显示所有者的Unix用户标识符
+                             一个进程的会话，如果系统支持有
+                             被包括在内。
+
+       pcpu％CPU参见％cpu。 （别名％cpu）。
+
+       待处理信号的待处理PENDING掩码。见信号（7）。
+                             该流程中待处理的信号不同于
+                             各个线程上的信号待处理。使用它们
+                             选项或-m选项以查看两者。根据
+                             到字段的宽度，32或64位掩码
+                             显示十六进制格式。 （别名sig）。
+
+       pgid PGID进程组ID或等效进程ID
+                             流程组负责人。 （别名pgrp）。
+
+       pgrp PGRP见pgid。 （别名pgid）。
+
+       pid PID表示进程ID的数字（别名
+                             TGID）。
+
+       pidns PIDNS描述命名空间的唯一inode编号
+                             过程属于。请参阅命名空间（7）。
+
+       pmem％MEM见％mem。 （别名％mem）。
+
+
+
+
+
+       策略POL调度类的过程。 （别名
+                             class，cls）。可能的值是：
+
+                                       - 没有报道
+                                      TS SCHED_OTHER
+                                      FF SCHED_FIFO
+                                      RR SCHED_RR
+                                      B SCHED_BATCH
+                                      ISO SCHED_ISO
+                                      IDL SCHED_IDLE
+                                      ？未知的价值
+
+       ppid PPID父进程ID。
+
+       pri PRI优先处理过程。数字越大意味着
+                             优先级较低。
+
+       psr当前分配给该进程的PSR处理器。
+
+       rgid RGID真实组ID。
+
+       rgroup RGROUP真正的组名。这将是文本组
+                             ID，如果可以获得和字段宽度
+                             允许，否则为十进制表示。
+
+       rss RSS驻留集大小，非交换物理
+                             任务使用的内存（以千字节为单位）。
+                             （别名rssize，rsz）。
+
+       rssize RSS见rss。 （别名rss，rsz）。
+
+       rsz RSZ见rss。 （别名rss，rssize）。
+
+       rtprio RTPRIO实时优先级。
+
+       ruid RUID真实用户ID。
+
+       ruser RUSER真实用户ID。这将是文本用户ID，
+                             如果可以获得和场宽
+                             允许，否则为十进制表示。
+
+       s S最小状态显示（一个字符）。看到
+                             部分过程状态代码为不同的
+                             值。如果您想要额外的信息，请参阅stat
+                             信息显示。 （别名）。
+
+       sched SCH调度策略的过程。政策
+                             SCHED_OTHER (SCHED_NORMAL), SCHED_FIFO, SCHED_RR,
+                             SCHED_BATCH, SCHED_ISO, and SCHED_IDLE are
+                             respectively displayed as 0, 1, 2, 3, 4, and 5.
+
+       seat        SEAT      displays the identifier associated with all
+                             hardware devices assigned to a specific
+                             workplace, if systemd support has been included.
+
+       sess        SESS      session ID or, equivalently, the process ID of
+                             the session leader.  (alias session, sid).
+
+       sgi_p       P         processor that the process is currently executing
+                             on.  Displays "*" if the process is not currently
+                             running or runnable.
+
+       sgid        SGID      saved group ID.  (alias svgid).
+
+       sgroup      SGROUP    saved group name.  This will be the textual group
+                             ID, if it can be obtained and the field width
+                             permits, or a decimal representation otherwise.
+
+
+       sid         SID       see sess.  (alias sess, session).
+
+       sig         PENDING   see pending.  (alias pending, sig_pend).
+
+       sigcatch    CAUGHT    see caught.  (alias caught, sig_catch).
+
+       sigignore   IGNORED   see ignored.  (alias ignored, sig_ignore).
+
+       sigmask     BLOCKED   see blocked.  (alias blocked, sig_block).
+
+       size        SIZE      approximate amount of swap space that would be
+                             required if the process were to dirty all
+                             writable pages and then be swapped out.这个
+                             number is very rough!
+
+       slice       SLICE     displays the slice unit which a process belongs
+                             to, if systemd support has been included.
+
+       spid        SPID      see lwp.  (alias lwp, tid).
+
+       stackp      STACKP    address of the bottom (start) of stack for the
+                             process.
+
+       start       STARTED   time the command started.  If the process was
+                             started less than 24 hours ago, the output format
+                             is "HH:MM:SS", else it is "  Mmm dd" (where Mmm
+                             is a three-letter month name).  See also
+                             lstart, bsdstart, start_time, and stime.
+
+       start_time  START     starting time or date of the process.  Only the
+                             year will be displayed if the process was not
+                             started the same year ps was invoked, or "MmmDD"
+                             if it was not started the same day, or "HH:MM"
+                             otherwise.  See also bsdstart, start, lstart,
+                             and stime.
+
+       stat        STAT      multi-character process state.  See section
+                             PROCESS STATE CODES for the different values
+                             meaning.  See also s and state if you just want
+                             the first character displayed.
+
+       state       S         see s. (alias s).
+
+       suid        SUID      saved user ID.  (alias svuid).
+
+       supgid      SUPGID    group ids of supplementary groups, if any.  See
+                             getgroups(2).
+
+       supgrp      SUPGRP    group names of supplementary groups, if any.  See
+                             getgroups(2).
+
+       suser       SUSER     saved user name.  This will be the textual user
+                             ID, if it can be obtained and the field width
+                             permits, or a decimal representation otherwise.
+                             (alias svuser).
+
+       svgid       SVGID     see sgid.  (alias sgid).
+
+       svuid       SVUID     see suid.  (alias suid).
+
+       sz          SZ        size in physical pages of the core image of the
+                             process.  This includes text, data, and stack
+                             space.  Device mappings are currently excluded;
+                             this is subject to change.  See vsz and rss.
+
+       tgid        TGID      a number representing the thread group to which a
+                             task belongs (alias pid).  It is the process ID
+                             of the thread group leader.
+
+
+       thcgr       THCGR     display control groups to which the thread
+                             belongs.
+
+       thcount     THCNT     see nlwp.  (alias nlwp).  number of kernel
+                             threads owned by the process.
+
+       tid         TID       the unique number representing a dispatchable
+                             entity (alias lwp, spid).  This value may also
+                             appear as: a process ID (pid); a process group ID
+                             (pgrp); a session ID for the session leader
+                             (sid); a thread group ID for the thread group
+                             leader (tgid); and a tty process group ID for the
+                             process group leader (tpgid).
+
+       time        TIME      cumulative CPU time, "[DD-]HH:MM:SS" format.
+                             (alias cputime).
+
+       tname       TTY       controlling tty (terminal).  (alias tt, tty).
+
+       tpgid       TPGID     ID of the foreground process group on the tty
+                             (terminal) that the process is connected to, or
+                             -1 if the process is not connected to a tty.
+
+       trs         TRS       text resident set size, the amount of physical
+                             memory devoted to executable code.
+
+       tt          TT        controlling tty (terminal).  (alias tname, tty).
+
+       tty         TT        controlling tty (terminal).  (alias tname, tt).
+
+       ucmd        CMD       see comm.  (alias comm, ucomm).
+
+       ucomm       COMMAND   see comm.  (alias comm, ucmd).
+
+       uid         UID       see euid.  (alias euid).
+
+       uname       USER      see euser.  (alias euser, user).
+
+       unit        UNIT      displays unit which a process belongs to, if
+                             systemd support has been included.
+
+       user        USER      see euser.  (alias euser, uname).
+
+       userns      USERNS    Unique inode number describing the namespace the
+                             process belongs to. See namespaces(7).
+
+       utsns       UTSNS     Unique inode number describing the namespace the
+                             process belongs to. See namespaces(7).
+
+       uunit       UUNIT     displays user unit which a process belongs to, if
+                             systemd support has been included.
+
+       vsize       VSZ       see vsz.  (alias vsz).
+
+       vsz         VSZ       virtual memory size of the process in KiB
+                             (1024-byte units).  Device mappings are currently
+                             excluded; this is subject to change.  (alias
+                             vsize).
+
+       wchan       WCHAN     name of the kernel function in which the process
+                             is sleeping, a "-" if the process is running, or
+                             a "*" if the process is multi-threaded and ps is
+                             not displaying threads.
+
+
+ENVIRONMENT VARIABLES
+       The following environment variables could affect ps:
+
+       COLUMNS
+          Override default display width.
+
+       LINES
+          Override default display height.
+
+       PS_PERSONALITY
+          Set to one of posix, old, linux, bsd, sun, digital...  (see section
+          PERSONALITY below).
+
+       CMD_ENV
+          Set to one of posix, old, linux, bsd, sun, digital...  (see section
+          PERSONALITY below).
+
+       I_WANT_A_BROKEN_PS
+          Force obsolete command line interpretation.
+
+       LC_TIME
+          Date format.
+
+       PS_COLORS
+          Not currently supported.
+
+       PS_FORMAT
+          Default output format override. You may set this to a format string
+          of the type used for the -o option.  The DefSysV and DefBSD values
+          are particularly useful.
+
+       PS_SYSMAP
+          Default namelist (System.map) location.
+
+       PS_SYSTEM_MAP
+          Default namelist (System.map) location.
+
+       POSIXLY_CORRECT
+          Don't find excuses to ignore bad "features".
+
+       POSIX2
+          When set to "on", acts as POSIXLY_CORRECT.
+
+       UNIX95
+          Don't find excuses to ignore bad "features".
+
+       _XPG
+          Cancel CMD_ENV=irix non-standard behavior.
+
+       In general, it is a bad idea to set these variables.  The one exception
+       is CMD_ENV or PS_PERSONALITY, which could be set to Linux for normal
+       systems.  Without that setting, ps follows the useless and bad parts of
+       the Unix98 standard.
+
+PERSONALITY
+       390        like the OS/390 OpenEdition ps
+       aix        like AIX ps
+       bsd        like FreeBSD ps (totally non-standard)
+       compaq     like Digital Unix ps
+       debian     like the old Debian ps
+       digital    like Tru64 (was Digital Unix, was OSF/1) ps
+       gnu        like the old Debian ps
+       hp         like HP-UX ps
+       hpux       like HP-UX ps
+       irix       like Irix ps
+       linux      ***** recommended *****
+       old        like the original Linux ps (totally non-standard)
+       os390      like OS/390 Open Edition ps
+       posix      standard
+       s390       like OS/390 Open Edition ps
+       sco        like SCO ps
+
+       sgi        like Irix ps
+       solaris2   like Solaris 2+ (SunOS 5) ps
+       sunos4     like SunOS 4 (Solaris 1) ps (totally non-standard)
+       svr4       standard
+       sysv       standard
+       tru64      like Tru64 (was Digital Unix, was OSF/1) ps
+       unix       standard
+       unix95     standard
+       unix98     standard
+
+也可以看看
+       pgrep(1), pstree(1), top(1), proc(5).
+
+标准
+       This ps conforms to:
+
+       1   Version 2 of the Single Unix Specification
+       2   The Open Group Technical Standard Base Specifications, Issue 6
+       3   IEEE Std 1003.1, 2004 Edition
+       4   X/Open System Interfaces Extension [UP XSI]
+       5   ISO/IEC 9945:2003
+
+作者
+       ps was originally written by Branko Lankester âŸ¨lankeste@fwi.uva.nlâŸ©.
+       Michael K. Johnson âŸ¨johnsonm@redhat.comâŸ© re-wrote it significantly to
+       use the proc filesystem, changing a few things in the process.  Michael
+       Shields âŸ¨mjshield@nyx.cs.du.eduâŸ© added the pid-list feature.  Charles
+       Blake âŸ¨cblake@bbn.comâŸ© added multi-level sorting, the dirent-style
+       library, the device name-to-number mmaped database, the approximate
+       binary search directly on System.map, and many code and documentation
+       cleanups.  David Mossberger-Tang wrote the generic BFD support for
+       psupdate.  Albert Cahalan âŸ¨albert@users.sf.netâŸ© rewrote ps for full
+       Unix98 and BSD support, along with some ugly hacks for obsolete and
+       foreign syntax.
+
+       Please send bug reports to âŸ¨procps@freelists.orgâŸ©.  No subscription is
+       required or suggested.
+
+
+
+procps-ng                          July 2014                             PS(1)

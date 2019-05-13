@@ -1,0 +1,332 @@
+              Save the readings in the file in binary form. Each reading is in
+              a separate record. The default value of the  filename  parameter
+              is  the  current daily data file, the /var/log/sa/sadd file.该
+              -o option is exclusive of the -f option.  All the data available
+              from  the  kernel  are saved in the file (in fact, sar calls its
+              data collector sadc with the option "-S ALL". See sadc(8) manual
+              page).
+
+       -P { cpu [,...] |所有}
+              Report  per-processor  statistics for the specified processor or
+              processors.  Specifying the ALL keyword reports  statistics  for
+              each  individual  processor,  and  globally  for all processors.
+              Note that processor 0 is the first processor.
+
+       -p     Pretty-print device names. Use this option in  conjunction  with
+              option  -d.  By default names are printed as dev m-n where m and
+              n are the major and minor numbers for the device.  Use  of  this
+              option displays the names of the devices as they (should) appear
+              in /dev. Name mappings  are  controlled  by  /etc/sysconfig/sys‐
+              stat.ioconf.
+
+       -q     Report  queue length and load averages. The following values are
+              displayed:
+
+              runq-sz
+                     Run queue length (number of tasks waiting for run time).
+
+              plist-sz
+                     Number of tasks in the task list.
+
+              ldavg-1
+                     System load average for the last minute.  The load  aver‐
+                     age  is  calculated  as the average number of runnable or
+                     running tasks (R state), and the number of tasks in unin‐
+                     terruptible sleep (D state) over the specified interval.
+
+              ldavg-5
+                     System load average for the past 5 minutes.
+
+              ldavg-15
+                     System load average for the past 15 minutes.
+
+              受阻
+                     Number  of  tasks  currently  blocked, waiting for I/O to
+                     complete.
+
+       -R     Report memory statistics. The following values are displayed:
+
+              frmpg/s
+                     Number of memory pages freed by the system per second.一个
+                     negative  value represents a number of pages allocated by
+                     the system.  Note that a page has a size of 4 kB or 8  kB
+                     according to the machine architecture.
+
+              bufpg/s
+                     Number  of additional memory pages used as buffers by the
+                     system per second.  A negative value  means  fewer  pages
+                     used as buffers by the system.
+
+              campg/s
+                     Number  of  additional  memory pages cached by the system
+                     每秒。 A negative value means fewer  pages  in  the
+                     cache.
+
+       -r     Report  memory utilization statistics.  The following values are
+              displayed:
+
+              kbmemfree
+                     Amount of free memory available in kilobytes.
+
+              kbmemused
+                     Amount of used memory in kilobytes. This  does  not  take
+                     into account memory used by the kernel itself.
+
+              %memused
+                     Percentage of used memory.
+
+              kbbuffers
+                     Amount  of  memory used as buffers by the kernel in kilo‐
+                     字节。
+
+              kbcached
+                     Amount of memory used to cache  data  by  the  kernel  in
+                     kilobytes.
+
+              kbcommit
+                     Amount  of  memory  in kilobytes needed for current work‐
+                     load. This is an estimate of how much RAM/swap is  needed
+                     to guarantee that there never is out of memory.
+
+              %commit
+                     Percentage of memory needed for current workload in rela‐
+                     tion to the total amount of memory (RAM+swap).  This num‐
+                     ber  may  be greater than 100% because the kernel usually
+                     overcommits memory.
+
+              kbactive
+                     Amount of active memory in  kilobytes  (memory  that  has
+                     been  used more recently and usually not reclaimed unless
+                     absolutely necessary).
+
+              kbinact
+                     Amount of inactive memory in kilobytes (memory which  has
+                     been  less  recently  used.  It  is  more  eligible to be
+                     reclaimed for other purposes).
+
+              kbdirty
+                     Amount of memory in kilobytes waiting to get written back
+                     to the disk.
+
+       -S     Report  swap space utilization statistics.  The following values
+              are displayed:
+
+              kbswpfree
+                     Amount of free swap space in kilobytes.
+
+              kbswpused
+                     Amount of used swap space in kilobytes.
+
+              %swpused
+                     Percentage of used swap space.
+
+              kbswpcad
+                     Amount of cached swap memory in kilobytes.  This is  mem‐
+                     ory  that  once  was  swapped out, is swapped back in but
+                     still also is in the swap area (if memory  is  needed  it
+                     doesn't  need  to  be  swapped  out  again  because it is
+                     already in the swap area. This saves I/O).
+
+              %swpcad
+                     Percentage of cached  swap  memory  in  relation  to  the
+                     amount of used swap space.
+
+       -s [ hh:mm:ss ]
+              Set  the  starting  time of the data, causing the sar command to
+              extract records time-tagged at, or following,  the  time  speci‐
+              fied.  The  default  starting  time  is 08:00:00.  Hours must be
+              given in 24-hour format. This option can be used only when  data
+              are read from a file (option -f ).
+
+       -t     When  reading  data  from  a  daily data file, indicate that sar
+              should display the timestamps in the original local time of  the
+              data file creator. Without this option, the sar command displays
+              the timestamps in the user's locale time.
+
+       -u [ ALL ]
+              Report CPU utilization. The ALL keyword indicates that  all  the
+              CPU fields should be displayed.  The report may show the follow‐
+              ing fields:
+
+              ％用户
+                     Percentage of CPU utilization that occurred while execut‐
+                     ing at the user level (application). Note that this field
+                     includes time spent running virtual processors.
+
+              %usr
+                     Percentage of CPU utilization that occurred while execut‐
+                     ing at the user level (application). Note that this field
+                     does NOT include time spent running virtual processors.
+
+              ％不错
+                     Percentage of CPU utilization that occurred while execut‐
+                     ing at the user level with nice priority.
+
+              ％系统
+                     Percentage of CPU utilization that occurred while execut‐
+                     ing at the system level (kernel). Note  that  this  field
+                     includes  time  spent  servicing  hardware  and  software
+                     interrupts.
+
+              %sys
+                     Percentage of CPU utilization that occurred while execut‐
+                     ing  at  the  system level (kernel). Note that this field
+                     does NOT include time spent servicing hardware  or  soft‐
+                     ware interrupts.
+
+              IOWAIT％
+                     Percentage  of time that the CPU or CPUs were idle during
+                     which the system had an outstanding disk I/O request.
+
+              ％偷
+                     Percentage of time spent in involuntary wait by the  vir‐
+                     tual  CPU  or  CPUs  while  the  hypervisor was servicing
+                     another virtual processor.
+
+              %irq
+                     Percentage of time spent by the CPU or  CPUs  to  service
+                     hardware interrupts.
+
+              %soft
+                     Percentage  of  time  spent by the CPU or CPUs to service
+                     software interrupts.
+
+              %guest
+                     Percentage of time spent by the CPU or CPUs to run a vir‐
+                     tual processor.
+
+              %gnice
+                     Percentage  of  time  spent  by  the CPU or CPUs to run a
+                     niced guest.
+
+              ％闲
+                     Percentage of time that the CPU or CPUs were idle and the
+                     system did not have an outstanding disk I/O request.
+
+              Note:  On SMP machines a processor that does not have any activ‐
+              ity at all (0.00 for every field) is a disabled  (offline)  pro‐
+              cessor.
+
+       -V打印版本号然后退出。
+
+       -v     Report  status of inode, file and other kernel tables.  The fol‐
+              lowing values are displayed:
+
+              dentunusd
+                     Number of unused cache entries in the directory cache.
+
+              file-nr
+                     Number of file handles used by the system.
+
+              inode-nr
+                     Number of inode handlers used by the system.
+
+              pty-nr
+                     Number of pseudo-terminals used by the system.
+
+       -W     Report swapping statistics. The following values are displayed:
+
+              pswpin/s
+                     Total number of swap pages the system brought in per sec‐
+                     ond.
+
+              pswpout/s
+                     Total  number  of  swap  pages the system brought out per
+                     second.
+
+       -w     Report task creation and system switching activity.
+
+              proc/s
+                     Total number of tasks created per second.
+
+              cswch/s
+                     Total number of context switches per second.
+
+       -y     Report TTY device activity. The following values are displayed:
+
+              rcvin/s
+                     Number of  receive  interrupts  per  second  for  current
+                     serial  line. Serial line number is given in the TTY col‐
+                     umn.
+
+              xmtin/s
+                     Number of transmit  interrupts  per  second  for  current
+                     serial line.
+
+              framerr/s
+                     Number  of  frame  errors  per  second for current serial
+                     line.
+
+              prtyerr/s
+                     Number of parity errors per  second  for  current  serial
+                     line.
+
+              brk/s
+                     Number of breaks per second for current serial line.
+
+              ovrun/s
+                     Number  of  overrun  errors per second for current serial
+                     line.
+
+
+环境
+       The sar command takes into account the following environment variables:
+
+
+       S_TIME_FORMAT
+              如果此变量存在且其值为ISO，则为当前值
+              在报表中打印日期时，将忽略区域设置
+              头。 The sar command will use the ISO 8601 format  (YYYY-MM-
+              DD) instead.
+
+
+       S_TIME_DEF_TIME
+              If  this variable exists and its value is UTC then sar will save
+              its data in UTC time (data will  still  be  displayed  in  local
+              time).   sar  will  also  use  UTC time instead of local time to
+              determine the current daily data file located in the /var/log/sa
+              directory.  This  variable  may be useful for servers with users
+              located across several timezones.
+
+例子
+       sar -u 2 5
+              Report CPU utilization for each 2  seconds.  5  lines  are  dis‐
+              played.
+
+       sar -I 14 -o int14.file 2 10
+              Report  statistics  on  IRQ  14 for each 2 seconds. 10 lines are
+              显示。 Data are stored in a file called int14.file.
+
+       sar -r -n DEV -f /var/log/sa/sa16
+              Display memory and network statistics saved in daily  data  file
+              'sa16'.
+
+       sar -A
+              Display all the statistics saved in current daily data file.
+
+BUGS
+       /proc filesystem must be mounted for the sar command to work.
+
+       All the statistics are not necessarily available, depending on the ker‐
+       nel version used.  sar assumes that you are using at least a  2.6  ker‐
+       NEL。
+
+FILES
+       /var/log/sa/sadd
+              Indicate the daily data file, where the dd parameter is a number
+              representing the day of the month.
+
+       /proc contains various files with system statistics.
+
+作者
+       Sebastien Godard（sysstat <at> orange.fr）
+
+也可以看看
+       sadc(8), sa1(8), sa2(8),  sadf(1),  pidstat(1),  mpstat(1),  iostat(1),
+       vmstat(8)
+
+       http://pagesperso-orange.fr/sebastien.godard/
+
+
+
+Linux                           SEPTEMBER 2012                          SAR(1)

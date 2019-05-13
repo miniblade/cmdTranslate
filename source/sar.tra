@@ -1,0 +1,1450 @@
+SAR（1）Linux用户手册SAR（1）
+
+
+
+名称
+       sar  - 收集，报告或保存系统活动信息。
+
+概要
+       sar [-A] [-B] [ -  b] [ -  C] [ -  d] [ -  H] [ -  h] [ -  p] [ -  q] [ -  R]
+       ] [-r] [-S] [-t] [-u [ALL]] [-V] [-v] [-W] [-w] [-y
+       ] [-I {int [，...] | SUM |所有| XALL}] [-P {cpu [，...] |所有}]
+       [-m {keyword [，...] | ALL}] [-n {keyword [，...] | ALL}] [-j {
+       ID | LABEL |路径| UUID | ...}] [ -  f [文件名] | -o [文件名]
+       | -  [0-9] +] [-i interval] [-s [hh：mm：ss]] [-e [hh：mm：ss]] [
+       间隔[count]]
+
+描述
+       sar命令将标准输出写入所选内容
+       操作系统中的累积活动计数器。会计
+       系统，基于计数和间隔参数中的值，
+       将信息写入指定间隔的指定次数
+       以秒为单位的间隔。如果interval参数设置为零，
+       sar命令显示自该时间以来的平均时间统计信息
+       系统启动了。如果没有指定interval参数
+       计数参数，然后连续生成报告。 col-
+       提取的数据也可以保存在-o filename指定的文件中
+       标志，除了显示在屏幕上。如果文件名是
+       省略，sar使用标准的系统活动日常数据文件，
+       / var / log / sa / sadd文件，其中dd参数指示当前
+       天。默认情况下，内核中可用的所有数据都保存在
+       数据文件。
+
+       sar命令提取并写入标准输出记录
+       保存在文件中。该文件可以是由。指定的文件
+       -f标志，或默认情况下为标准系统活动每日数据文件。
+       也可以输入-1，-2等作为参数sar to dis-
+       播放那天前的数据。例如，-1将指向标准
+       昨天的系统活动文件。
+
+       没有-P标志，sar命令报告系统范围（全局）
+       所有处理器）统计信息，计算为值的平均值
+       表示为百分比，否则为总和。如果-P标志是
+       给定，sar命令报告与指定的相关的活动
+       处理器或处理器。如果给出-P ALL，则sar命令报告
+       每个处理器的统计数据和全球统计数据
+       所有处理器。
+
+       您可以使用选择有关特定系统活动的信息
+       标志。不指定任何标志仅选择CPU活动。指定
+       -A标志选择所有可能的活动。
+
+       sar命令的默认版本（CPU利用率报告）可能
+       是用户开始系统活动的首批设施之一
+       调查，因为它监视主要的系统资源。如果CPU用户
+       lization接近100％（用户+不错+系统），工作负载sam-
+       pled是受CPU限制的。
+
+       如果需要多个样本和多个报告，则很方便
+       为sar命令指定输出文件。运行sar命令为
+       后台进程。这个语法是：
+
+       sar -o数据文件间隔计数> / dev / null 2>＆1＆
+
+       所有数据都以二进制形式捕获并保存到文件（数据文件）中。
+       然后可以使用sar命令选择性地显示数据
+       -f选项。设置间隔和计数参数以选择计数
+       间隔第二个间隔的记录。如果count参数不是
+       设置，将选择保存在文件中的所有记录。收集
+       以这种方式的数据对于表征系统使用情况非常有用
+       一段时间并确定高峰使用时间。
+
+       注意：sar命令仅报告本地活动。
+
+
+OPTIONS
+       -A这相当于指定-bBdHqrRSuvwWy -I SUM -I XALL
+              -m ALL -n ALL -u ALL -P ALL。
+
+       -B报告分页统计信息。将显示以下值：
+
+              pgpgin /秒
+                     系统从磁盘分页的总千字节数
+                     每秒。
+
+              pgpgout /秒
+                     系统分页到磁盘的总千字节数
+                     每秒。
+
+              故障/秒
+                     系统发生的页面错误（主要+次要）数
+                     每秒。这不是一个页面错误的计数 - 
+                     erate I / O，因为某些页面错误可以通过以下方式解决：
+                     输出I / O.
+
+              majflt /秒
+                     系统每秒发生的主要故障数，
+                     那些需要加载内存页面的
+                     磁盘。
+
+              pgfree /秒
+                     系统每个放置在空闲列表中的页数
+                     第二。
+
+              pgscank /秒
+                     每秒由kswapd守护程序扫描的页数。
+
+              pgscand /秒
+                     每秒直接扫描的页数。
+
+              pgsteal /秒
+                     系统从缓存中回收的页数
+                     （pagecache和swapcache）每秒以满足其内存
+                     ory要求。
+
+              ％vmeff
+                     计算为pgsteal / pgscan，这是一个度量标准
+                     页面回收效率。如果它接近100％那么
+                     几乎每一页都从不活跃的尾巴中脱颖而出
+                     正在收集清单。如果它太低（例如小于
+                     30％）然后虚拟内存有一些困难。
+                     如果没有页面，则该字段显示为零
+                     在这段时间内扫描。
+
+       -b报告I / O和传输速率统计信息。以下值
+              显示：
+
+              TPS
+                     发给的每秒转账总数
+                     物理设备。传输是对a的I / O请求
+                     物理设备。多个逻辑请求可以是
+                     被绑定到设备的单个I / O请求。反式
+                     fer具有不确定的大小。
+
+              RTPS
+                     发给物理的每秒读取请求总数
+                     校准设备。
+
+              水厂
+                     向医生发出的每秒写入请求总数
+                     设备。
+
+              面包/秒
+                     以块为单位从设备读取的数据总量
+                     第二。块等同于扇区，因此
+                     大小为512字节。
+
+              bwrtn /秒
+                     以块为单位写入设备的数据总量
+                     第二。
+
+       -C从文件中读取数据时，告诉sar显示注释
+              已被sadc插入。
+
+       -d每个块设备的报告活动。显示数据时
+              通常使用设备规范dev m-n（DEV col-
+              UMN）。 m是设备的主要编号，n是次要编号
+              BER。如果选项-p是，则设备名称也可以是漂亮打印的
+              如果选项-j是，则可以打印已使用或持久的设备名称
+              使用（见下文）。请注意，磁盘活动取决于sadc
+              选项“-S DISK”和“-S XDISK”将被收集。下列
+              值显示：
+
+              TPS
+                     表示每秒的转移次数
+                     发给设备。可以有多个逻辑请求
+                     组合成设备的单个I / O请求。一个
+                     转移的大小不确定。
+
+              rd_sec /秒
+                     从设备读取的扇区数。一个大小
+                     扇区是512字节。
+
+              wr_sec /秒
+                     写入设备的扇区数。一个大小
+                     扇区是512字节。
+
+              avgrq-SZ
+                     请求的平均大小（以扇区为单位）
+                     发给设备。
+
+              avgqu-SZ
+                     发出的请求的平均队列长度
+                     到设备。
+
+              等待
+                     I / O请求的平均时间（以毫秒为单位）
+                     发给要服务的设备。这包括时间
+                     队列中的请求所花费的时间以及服务所花费的时间
+                     他们。
+
+              svctm的
+                     I / O的平均服务时间（以毫秒为单位）
+                     发出给设备的​​请求。警告！不要
+                     再相信这个领域了。该字段将被删除
+                     未来的sysstat版本。
+
+              ％UTIL
+                     I / O请求所用的已用时间百分比
+                     发给设备（带宽利用率）
+                     设备）。此值为时，会发生设备饱和
+                     接近100％。
+
+       -e [hh：mm：ss]
+              设置报告的结束时间。默认结束时间是
+              18:00:00。小时数必须以24小时格式提供。这个选项
+              可以在从文件读取数据或将数据写入文件时使用
+              （选项-f或-o）。
+
+       -f [文件名]
+              从文件名中提取记录（由-o filename标志创建）。
+              filename参数的默认值是当前每日
+              数据文件，/ var / log / sa / sadd文件。 -f选项是独占的
+              -o选项。
+
+       -H报告hugepages利用率统计。以下值
+              显示：
+
+              kbhugfree
+                     尚未达到的以千字节为单位的大页面内存量
+                     分配。
+
+              kbhugused
+                     以千字节为单位的大页面内存量
+                     分配。
+
+              ％hugused
+                     已经分配的大页内存总量的百分比
+                     cated。
+
+       -h显示简短的帮助消息，然后退出。
+
+       -I {int [，...] | SUM |所有| XALL}
+              报告给定中断的统计信息。 int是中断
+              数。在命令上指定多个-I int参数
+              line将查看多个独立的中断。 SUM键 - 
+              word表示每个接收的中断总数
+              第二个是显示。 ALL关键字表示sta
+              来自前16个中断的tistics将被报告，而
+              XALL关键字表示来自所有中断的统计信息，
+              包括潜在的APIC中断源，将被报告。
+              请注意，中断统计信息取决于sadc选项“-S INT”
+              被收集。
+
+       -i interval
+              选择数据记录的秒数尽可能接近数字
+              由interval参数指定。
+
+       -j {ID | LABEL |路径| UUID | ...}
+              显示持久性设备名称。结合使用此选项
+              使用选项-d。选项ID，LABEL等指定的类型
+              持久的名字。这些选项不受限制，只有先决条件
+              site是存在具有所需持久名称的目录
+              在/ dev / disk中。如果找不到设备的永久名称，
+              设备名称打印得很漂亮（请参阅下面的选项-p）。
+
+       -m {keyword [，...] |所有}
+              报告电源管理统计。请注意这些统计数据
+              依赖于sadc选项“-S POWER”来收集。
+
+              可能的关键字是CPU，FAN，FREQ，IN，TEMP和USB。
+
+              使用CPU关键字，将报告有关CPU的统计信息。该
+              显示以下值：
+
+              兆赫
+                     瞬时CPU时钟频率，单位为MHz。
+
+              使用FAN关键字，可以报告有关风扇速度的统计信息。
+              将显示以下值：
+
+              转
+                     风扇速度以每分钟转数表示。
+
+              DRPM
+                     此字段计算为cur-之间的差异
+                     租用风扇转速（rpm）及其下限（fan_min）。
+
+              设备
+                     传感器设备名称。
+
+              使用FREQ关键字，有关CPU时钟频率的统计信息
+              报道。将显示以下值：
+
+              wghMHz
+                     加权平均CPU时钟频率，单位为MHz。注意
+                     必须在内核中编译cpufreq-stats驱动程序
+                     这个选项工作。
+
+              使用IN关键字，有关电压输入的统计信息
+              报道。将显示以下值：
+
+              INV
+                     电压输入以伏特表示。
+
+              ％在
+                     相对输入值。值100％表示电压
+                     输入已达到其上限（in_max）而值
+                     0％意味着它已达到其下限（in_min）。
+
+              设备
+                     传感器设备名称。
+
+              使用TEMP关键字，有关设备温度的统计信息
+              报道。将显示以下值：
+
+              摄氏度
+                     设备温度以摄氏度表示。
+
+              ％TEMP
+                     相对设备温度。值100％表示
+                     温度已达到其上限（temp_max）。
+
+              设备
+                     传感器设备名称。
+
+              使用USB关键字，sar命令可以获取所有的快照
+              USB设备当前插入系统。在......的最后
+              报告中，sar将显示所有这些USB设备的摘要。
+              将显示以下值：
+
+              总线
+                     USB设备的根集线器号。
+
+              idvendor
+                     供应商ID号（由USB组织分配）。
+
+              idprod
+                     产品ID号（由制造商分配）。
+
+              最大功率
+                     设备的最大功耗（以。表示）
+                     嘛）。
+
+              厂家专业
+                     生产商名称。
+
+              产品
+                     产品名称。
+
+       -n {keyword [，...] |所有}
+              报告网络统计。
+
+              可能的关键字是DEV，EDEV，NFS，NFSD，SOCK，IP，EIP，ICMP，
+              EICMP，TCP，ETCP，UDP，SOCK6，IP6，EIP6，ICMP6，EICMP6和UDP6。
+
+              使用DEV关键字，来自网络设备的统计信息是
+              报道。将显示以下值：
+
+              我面对
+                     统计信息所在的网络接口的名称
+                     报道。
+
+              rxpck /秒
+                     每秒接收的数据包总数。
+
+              txpck /秒
+                     每秒传输的数据包总数。
+
+              rxkB /秒
+                     每秒收到的千字节总数。
+
+              txkB /秒
+                     每秒传输的总千字节数。
+
+              rxcmp /秒
+                     每秒接收的压缩包数（for
+                     cslip等）。
+
+              txcmp /秒
+                     每秒传输的压缩包数。
+
+              rxmcst /秒
+                     每秒接收的组播数据包数。
+
+              使用EDEV关键字，可以从中获取有关故障（错误）的统计信息
+              报告了网络设备。以下值为
+              玩：
+
+              我面对
+                     统计信息所在的网络接口的名称
+                     报道。
+
+              RXERR /秒
+                     每秒收到的坏包总数。
+
+              TXERR /秒
+                     每秒发生的错误总数
+                     传输数据包。
+
+              科尔/秒
+                     每秒发生的碰撞次数
+                     传输数据包。
+
+              rxdrop /秒
+                     由于每秒丢弃的接收数据包数
+                     Linux缓冲区空间不足。
+
+              txdrop /秒
+                     每秒丢弃的传输数据包数量
+                     Linux缓冲区中缺少空间
+
+              txcarr /秒
+                     每秒发生的载波错误数
+                     传输数据包。
+
+              rxfram /秒
+                     每秒发生的帧对齐错误数
+                     收到的数据包。
+
+              RXFIFO /秒
+                     每秒发生的FIFO溢出错误数
+                     收到包。
+
+              TXFIFO /秒
+                     每秒发生的FIFO溢出错误数
+                     传输数据包。
+
+              使用NFS关键字，有关NFS客户端活动的统计信息
+              报道。将显示以下值：
+
+              调用/秒
+                     每秒发出的RPC请求数。
+
+              重传/秒
+                     每秒RPC请求数，需要的数量
+                     被重传（例如由于服务器时间 - 
+                     出）。
+
+              读/秒
+                     每秒进行的“读取”RPC调用次数。
+
+              写/秒
+                     每秒进行的“写入”RPC调用次数。
+
+              访问/秒
+                     每秒进行的“访问”RPC调用次数。
+
+              getatt /秒
+                     每秒进行的“getattr”RPC调用次数。
+
+              使用NFSD关键字，有关NFS服务器活动的统计信息
+              报道。将显示以下值：
+
+              头疥/秒
+                     每秒收到的RPC请求数。
+
+              badcall /秒
+                     每秒收到的错误RPC请求数，即那些
+                     其处理产生了错误。
+
+              包/秒
+                     每秒接收的网络数据包数。
+
+              UDP /秒
+                     每秒接收的UDP数据包数。
+
+              TCP /秒
+                     每秒接收的TCP数据包数。
+
+              命中/秒
+                     每秒回复缓存命中数。
+
+              小姐/秒
+                     每秒回复缓存未命中数。
+
+              SREAD /秒
+                     每秒接收的“读取”RPC调用数。
+
+              SWRITE /秒
+                     每秒收到的“写入”RPC调用次数。
+
+              SACCESS /秒
+                     每秒接收的“访问”RPC调用数。
+
+              sgetatt /秒
+                     每秒收到的'getattr'RPC调用数。
+
+              使用SOCK关键字，可以报告有关正在使用的套接字的统计信息
+              （IPv4）的。将显示以下值：
+
+              totsck
+                     系统使用的套接字总数。
+
+              tcpsck
+                     当前正在使用的TCP套接字数。
+
+              udpsck
+                     当前使用的UDP套接字数。
+
+              rawsck
+                     目前正在使用的RAW套接字数量。
+
+              IP-FRAG
+                     当前队列中的IP分片数。
+
+              TCP-TW
+                     TIME_WAIT状态下的TCP套接字数。
+
+              使用IP关键字，可以获得有关IPv4网络流量的统计信息
+              报道。请注意，IPv4统计信息取决于sadc选项“-S
+              SNMP“将被收集。显示以下值（对于 - 
+              方括号之间的错误SNMP名称）：
+
+              IREC /秒
+                     从中间接收的输入数据报总数
+                     每秒面数，包括错误收到的面数
+                     [ipInReceives]。
+
+              fwddgm /秒
+                     每秒输入数据报的数量，为此
+                     实体不是他们的最终IP目的地，因此
+                     试图找到转发它们的路线
+                     到最后的目的地[ipForwDatagrams]。
+
+              IDEL /秒
+                     输入数据报的总数成功交付
+                     每秒ered到IP用户协议（包括ICMP）
+                     [ipInDelivers]。
+
+              ORQ /秒
+                     本地IP用户提供的IP数据报总数
+                     每秒提供给IP的协议（包括ICMP）
+                     请求传输[ipOutRequests]。注意
+                     此计数器不包括计入的任何数据报
+                     fwddgm /秒。
+
+              asmrq /秒
+                     每秒接收的IP分片数
+                     需要在此实体[ipReasmReqds]重新组装。
+
+              asmok /秒
+                     每个成功重组的IP数据报数量
+                     第二个[ipReasmOKs]。
+
+              fragok /秒
+                     已成功的IP数据报数
+                     每秒在此实体上分散[ipFragOKs]。
+
+              fragcrt /秒
+                     已经生成的IP数据报片段数量
+                     由于这种分裂造成的每秒钟的速度
+                     entity [ipFragCreates]。
+
+              使用EIP关键字，有关IPv4网络错误的统计信息
+              报道。请注意，IPv4统计信息取决于sadc选项“-S
+              SNMP“将被收集。显示以下值（对于 - 
+              方括号之间的错误SNMP名称）：
+
+              ihdrerr /秒
+                     由于每秒丢弃的输入数据报数
+                     IP标头中的错误，包括错误的校验和，
+                     sion数量不匹配，其他格式错误，生存时间
+                     超出，处理其IP时发现的错误
+                     选项等[ipInHdrErrors]
+
+              iadrerr /秒
+                     每秒丢弃的输入数据报数
+                     因为IP地址在其IP头的目的地
+                     字段不是有效的地址
+                     实体。此计数包括无效地址（例如，
+                     0.0.0.0）和不支持的类的地址（例如，
+                     E类）。对于不是IP路由器的实体
+                     因此，不转发数据报，此计数器包括
+                     数据报因目标地址而被丢弃
+                     不是本地地址[ipInAddrErrors]。
+
+              iukwnpr /秒
+                     收到的本地寻址数据报的数量成功
+                     因为一个未知的而导致每秒丢弃但丢弃
+                     或不支持的协议[ipInUnknownProtos]。
+
+              idisc /秒
+                     每秒输入IP数据报的数量，没有
+                     遇到了问题，以防止他们继续亲
+                     cessing，但被丢弃（例如，由于缺乏buf-
+                     fer space）[ipInDiscards]。请注意，此计数器可以
+                     不包括等待重新丢弃的任何数据报
+                     部件。
+
+              odisc /秒
+                     每秒输出IP数据报的数量，没有
+                     遇到了阻止它们传播的问题
+                     他们的目的地，但被丢弃（例如，为
+                     缺少缓冲空间）[ipOutDiscards]。请注意这一点
+                     计数器将包括以fwddgm / s计数的数据报
+                     任何此类数据包符合此（任意）丢弃标准 - 
+                     RION。
+
+              onort /秒
+                     每秒丢弃的IP数据报数量，因为
+                     没有找到任何路线将它们传送到他们的目的地
+                     国家[ipOutNoRoutes]。请注意，此计数器包括
+                     在fwddgm / s中计算的任何数据包符合这个'不 - 
+                     路线'标准。请注意，这包括任何数据报
+                     主机无法路由，因为它的所有默认值
+                     路由器坏了。
+
+              ASMF /秒
+                     IP重新每秒检测到的故障数
+                     汇编算法（无论出于何种原因：超时，
+                     错误等）[ipReasmFails]。请注意，这不是nec-
+                     从某些方面开始计算丢弃的IP片段
+                     算法可能会失去对碎片数量的跟踪
+                     收到它们时将它们合并。
+
+              fragf /秒
+                     每个丢弃的IP数据报的数量
+                     第二，因为他们需要在这方面分散
+                     实体但不可能，例如，因为他们不要破碎 - 
+                     设置了标志[ipFragFails]。
+
+              使用ICMP关键字，有关ICMPv4网络流量的统计信息
+              有报道。请注意，ICMPv4统计信息取决于sadc选项
+              收集“-S SNMP”。显示以下值
+              （方括号之间的正式SNMP名称）：
+
+              IMSG /秒
+                     实体所在的ICMP消息总数
+                     每秒收到[icmpInMsgs]。注意这个计数器
+                     包括所有由ierr / s计数的人。
+
+              OMSG /秒
+                     此实体的ICMP消息总数
+                     试图每秒发送[icmpOutMsgs]。注意
+                     此计数器包括所有由oerr / s计数的计数器。
+
+              iech /秒
+                     每个收到的ICMP Echo（请求）消息的数量
+                     第二个[icmpInEchos]。
+
+              iechr /秒
+                     每秒收到的ICMP Echo Reply消息的数量 - 
+                     ond [icmpInEchoReps]。
+
+              oech /秒
+                     每秒发送的ICMP Echo（请求）消息数 - 
+                     ond [icmpOutEchos]。
+
+              oechr /秒
+                     每秒发送的ICMP Echo Reply消息数
+                     [icmpOutEchoReps]。
+
+              ITM /秒
+                     收到的ICMP时间戳（请求）消息的数量
+                     每秒[icmpInTimestamps]。
+
+              ITMR /秒
+                     每个收到的ICMP时间戳回复消息的数量
+                     第二个[icmpInTimestampReps]。
+
+              OTM /秒
+                     每个发送的ICMP时间戳（请求）消息的数量
+                     第二个[icmpOutTimestamps]。
+
+              otmr /秒
+                     每秒发送的ICMP时间戳回复消息的数量 - 
+                     ond [icmpOutTimestampReps]。
+
+              iadrmk /秒
+                     收到的ICMP地址掩码请求消息的数量
+                     每秒[icmpInAddrMasks]。
+
+              iadrmkr /秒
+                     收到的ICMP地址掩码应答消息的数量
+                     每秒[icmpInAddrMaskReps]。
+
+              oadrmk /秒
+                     每个发送的ICMP地址掩码请求消息的数量
+                     第二个[icmpOutAddrMasks]。
+
+              oadrmkr /秒
+                     每个发送的ICMP地址掩码应答消息的数量
+                     第二个[icmpOutAddrMaskReps]。
+
+              使用EICMP关键字，有关ICMPv4错误消息的统计信息
+              有报道。请注意，ICMPv4统计信息取决于sadc选项
+              收集“-S SNMP”。显示以下值
+              （方括号之间的正式SNMP名称）：
+
+              IERR /秒
+                     实体每秒ICMP消息的数量
+                     收到但确定为具有ICMP特定的错误
+                     （错误的ICMP校验和，错误的长度等）[icmpInErrors]。
+
+              OERR /秒
+                     每秒ICMP消息的数量，这个实体
+                     没有发送由于ICMP内发现的问题
+                     由于缺少缓冲区[icmpOutErrors]。
+
+              idstunr /秒
+                     ICMP目标无法到达消息的数量
+                     每秒收到[icmpInDestUnreachs]。
+
+              odstunr /秒
+                     发送的ICMP目标无法到达消息的数量
+                     每秒[icmpOutDestUnreachs]。
+
+              itmex /秒
+                     每个收到的ICMP超时消息数
+                     第二个[icmpInTimeExcds]。
+
+              otmex /秒
+                     每秒发送的ICMP超时消息数
+                     [icmpOutTimeExcds]。
+
+              iparmpb /秒
+                     收到的ICMP参数问题消息的数量
+                     每秒[icmpInParmProbs]。
+
+              oparmpb /秒
+                     每个发送的ICMP参数问题消息的数量
+                     第二个[icmpOutParmProbs]。
+
+              isrcq /秒
+                     每个收到的ICMP Source Quench消息的数量
+                     第二个[icmpInSrcQuenchs]。
+
+              osrcq /秒
+                     每秒发送的ICMP Source Quench消息数
+                     [icmpOutSrcQuenchs]。
+
+              iredir /秒
+                     每秒收到的ICMP重定向消息数
+                     [icmpInRedirects]。
+
+              oredir /秒
+                     每秒发送的ICMP重定向消息数
+                     [icmpOutRedirects]。
+
+              使用TCP关键字，可以获得有关TCPv4网络流量的统计信息
+              报道。请注意，TCPv4统计信息取决于sadc选项“-S
+              SNMP“将被收集。显示以下值（对于 - 
+              方括号之间的错误SNMP名称）：
+
+              活性/ s的
+                     TCP连接直接的次数
+                     从CLOSED状态转换到SYN-SENT状态
+                     每秒[tcpActiveOpens]。
+
+              被动/秒
+                     TCP连接直接的次数
+                     从LISTEN状态转换到SYN-RCVD状态
+                     每秒[tcpPassiveOpens]。
+
+              ISEG /秒
+                     每秒收到的细分总数，包括 - 
+                     那些收到错误的人[tcpInSegs]。这算了
+                     包括目前已建立的
+                     nections。
+
+              oseg /秒
+                     每秒发送的段总数，包括
+                     那些目前的连接但不包括那些包含 - 
+                     仅重传的八位字节[tcpOutSegs]。
+
+              使用ETCP关键字，有关TCPv4网络错误的统计信息
+              报道。请注意，TCPv4统计信息取决于sadc选项“-S
+              SNMP“将被收集。显示以下值（对于 - 
+              方括号之间的错误SNMP名称）：
+
+              atmptf /秒
+                     每秒TCP连接的次数
+                     从任何一个直接过渡到CLOSED状态
+                     SYN-SENT状态或SYN-RCVD状态，加上数量
+                     每秒的时间TCP连接直接转换
+                     从SYN-RCVD状态进入LISTEN状态
+                     [tcpAttemptFails]。
+
+              estres /秒
+                     每秒TCP连接的次数
+                     从任何一个直接过渡到CLOSED状态
+                     ESTABLISHED状态或CLOSE-WAIT状态[tcpEstabRe-
+                     套。
+
+              重传/秒
+                     每秒重新传输的段总数 - 
+                     也就是说，传输的TCP段数包含 - 
+                     一个或多个先前传输的八位字节[tcpRe-
+                     transSegs。
+
+              isegerr /秒
+                     收到的错误段总数（例如，错误
+                     TCP校验和）每秒[tcpInErrs]。
+
+              orsts /秒
+                     每秒发送的TCP段数包含
+                     RST标志[tcpOutRsts]。
+
+              使用UDP关键字，可以获得有关UDPv4网络流量的统计信息
+              报道。请注意，UDPv4统计信息取决于sadc选项“-S
+              SNMP“将被收集。显示以下值（对于 - 
+              方括号之间的错误SNMP名称）：
+
+              idgm /秒
+                     每秒传递的UDP数据报总数
+                     UDP用户[udpInDatagrams]。
+
+              odgm /秒
+                     每秒发送的UDP数据报总数
+                     这个实体[udpOutDatagrams]。
+
+              noport /秒
+                     每秒接收的UDP数据报总数
+                     哪个目的端口没有应用程序
+                     [udpNoPorts]。
+
+              idgmerr /秒
+                     每秒收到的UDP数据报数
+                     由于缺乏原因而无法交付
+                     目标端口[udpInErrors]上的应用程序。
+
+              使用SOCK6关键字，可以使用有关套接字的统计信息
+              报道（IPv6）。请注意，IPv6统计信息取决于sadc
+              选项“-S IPV6”将被收集。以下值为
+              玩：
+
+              tcp6sck
+                     当前正在使用的TCPv6套接字的数量。
+
+              udp6sck
+                     当前正在使用的UDPv6套接字的数量。
+
+              raw6sck
+                     目前正在使用的RAWv6插座数量。
+
+              IP6-FRAG
+                     当前正在使用的IPv6片段数。
+
+              使用IP6关键字，可以获得有关IPv6网络流量的统计信息
+              报道。请注意，IPv6统计信息取决于sadc选项“-S
+              IPV6“将被收集。显示以下值（对于 - 
+              方括号之间的错误SNMP名称）：
+
+              irec6 /秒
+                     从中间接收的输入数据报总数
+                     每秒面数，包括错误收到的面数
+                     [ipv6IfStatsInReceives]。
+
+              fwddgm6 /秒
+                     这个每秒输出数据报的数量
+                     实体收到并转发到最终目的地
+                     [ipv6IfStatsOutForwDatagrams]。
+
+              idel6 /秒
+                     每个成功交付的数据报总数
+                     第二个是IPv6用户协议（包括ICMP）[ipv6IfS-
+                     tatsInDelivers。
+
+              orq6 /秒
+                     本地IPv6用户的IPv6数据报总数 - 
+                     每秒向IPv6提供的协议（包括ICMP）
+                     传输请求[ipv6IfStatsOutRequests]。注意
+                     此计数器不包括任何计数的数据报
+                     在fwddgm6 / s中。
+
+              asmrq6 /秒
+                     每秒接收的IPv6分片数
+                     需要在此界面重新组装[ipv6IfStat-
+                     sReasmReqds。
+
+              asmok6 /秒
+                     每个成功重新组装的IPv6数据报的数量
+                     第二个[ipv6IfStatsReasmOKs]。
+
+              imcpck6 /秒
+                     每秒接收的组播数据包数
+                     接口[ipv6IfStatsInMcastPkts]。
+
+              omcpck6 /秒
+                     每秒传输的组播数据包数
+                     接口[ipv6IfStatsOutMcastPkts]。
+
+              fragok6 /秒
+                     已成功完成的IPv6数据报数
+                     每秒在此输出接口处碎片[ipv6IfS-
+                     tatsOutFragOKs。
+
+              fragcr6 /秒
+                     已经输出的数据报片段的数量
+                     由此产生的碎片每秒产生一次
+                     输出接口[ipv6IfStatsOutFragCreates]。
+
+              使用EIP6关键字，可以获得有关IPv6网络错误的统计信息
+              报道。请注意，IPv6统计信息取决于sadc选项“-S
+              IPV6“将被收集。显示以下值（对于 - 
+              方括号之间的错误SNMP名称）：
+
+              ihdrer6 /秒
+                     由于每秒丢弃的输入数据报数
+                     IPv6标头中的错误，包括版本号
+                     不匹配，其他格式错误，超出跳数，错误
+                     在处理IPv6选项等时发现
+                     [ipv6IfStatsInHdrErrors]
+
+              iadrer6 /秒
+                     每秒丢弃的输入数据报数
+                     因为IPv6头中的IPv6地址是destina-
+                     在此字段中，字段不是有效的地址
+                     实体。此计数包括无效地址（例如，:: 0）
+                     和不支持的地址（例如，与unallo-的地址 - 
+                     附带前缀）。对于非IPv6路由器的实体
+                     因此，不要转发数据报，这个计数器
+                     包括因目的地而丢弃的数据报
+                     地址不是本地地址[ipv6IfStatsInAddr-
+                     错误。
+
+              iukwnp6 /秒
+                     收到的本地寻址数据报的数量成功
+                     因为一个未知的而导致每秒丢弃但丢弃
+                     或不支持的协议[ipv6IfStatsInUnknownProtos]。
+
+              i2big6 /秒
+                     无法转发的输入数据报数
+                     每秒因为它们的大小超过链接MTU
+                     传出接口[ipv6IfStatsInTooBigErrors]。
+
+              idisc6 /秒
+                     每秒输入IPv6数据报的数量
+                     没有遇到任何问题阻止他们继续
+                     处理，但被丢弃（例如，缺乏
+                     缓冲区空间）[ipv6IfStatsInDiscards]。请注意这一点
+                     计数器不包括丢弃的任何数据报
+                     等待重新组装。
+
+              odisc6 /秒
+                     每秒输出IPv6数据报的数量
+                     没有遇到阻止它们传播的问题
+                     到目的地，但被丢弃（例如，为
+                     缺少缓冲区空间）[ipv6IfStatsOutDiscards]。注意
+                     此计数器将包括以fwddgm6 / s计算的数据报
+                     如果任何此类数据包符合此（自由裁量）丢弃标准
+                     terion。
+
+              inort6 /秒
+                     每秒丢弃的输入数据报数
+                     因为找不到路线将它们传送给他们
+                     destination [ipv6IfStatsInNoRoutes]。
+
+              onort6 /秒
+                     丢弃本地生成的IP数据报的数量
+                     每秒因为没有路由可以传输
+                     他们到目的地[未知的正式SNMP名称]。
+
+              asmf6 /秒
+                     IPv6每秒检测到的故障数
+                     重新组装算法（无论出于何种原因：超时，
+                     错误等）[ipv6IfStatsReasmFails]。请注意，这是
+                     因此，不一定是丢弃的IPv6片段数
+                     一些算法可能会丢失片段的数量
+                     通过在收到它们时将它们组合起来。
+
+              fragf6 /秒
+                     每个丢弃的IPv6数据报的数量
+                     第二，因为他们需要在此处分散
+                     把界面但不能是[ipv6IfStatsOutFragFails]。
+
+              itrpck6 /秒
+                     每秒丢弃的输入数据报数
+                     因为数据报帧没有携带足够的数据[ipv6IfS-
+                     tatsInTruncatedPkts。
+
+              使用ICMP6关键字，统计ICMPv6网络流量
+              有报道。请注意，ICMPv6统计信息取决于sadc选项
+              收集“-S IPV6”。显示以下值
+              （方括号之间的正式SNMP名称）：
+
+              imsg6 /秒
+                     相互之间收到的ICMP消息总数
+                     每秒面对，包括所有计算的人
+                     ierr6 / s [ipv6IfIcmpInMsgs]。
+
+              omsg6 /秒
+                     此接口所在的ICMP消息总数
+                     试图每秒发送一次[ipv6IfIcmpOutMsgs]。
+
+              iech6 /秒
+                     收到的ICMP Echo（请求）消息的数量
+                     每秒接口[ipv6IfIcmpInEchos]。
+
+              iechr6 /秒
+                     收到的ICMP Echo Reply消息的数量
+                     每秒接口[ipv6IfIcmpInEchoReplies]。
+
+              oechr6 /秒
+                     inter-发送的ICMP Echo Reply消息的数量
+                     每秒面对面[ipv6IfIcmpOutEchoReplies]。
+
+              igmbq6 /秒
+                     ICMPv6组成员查询消息的数量
+                     每秒接收一次接口[ipv6IfIcmpInGroup-
+                     MembQueries。
+
+              igmbr6 /秒
+                     ICMPv6组成员响应消息的数量
+                     每秒接收一次接口[ipv6IfIcmpInGroup-
+                     MembResponses。
+
+              ogmbr6 /秒
+                     ICMPv6组成员响应消息的数量
+                     每秒发送一次[ipv6IfIcmpOutGroupMembResponses]。
+
+              igmbrd6 /秒
+                     ICMPv6组成员减少消息的数量
+                     每秒接收一次接口[ipv6IfIcmpInGroup-
+                     MembReductions。
+
+              ogmbrd6 /秒
+                     ICMPv6组成员减少消息的数量
+                     每秒发送一次[ipv6IfIcmpOutGroupMembReductions]。
+
+              irtsol6 /秒
+                     收到的ICMP路由器征求消息的数量
+                     每秒接口[ipv6IfIcmpInRouterSolicits]。
+
+              ortsol6 /秒
+                     发送的ICMP路由器请求消息的数量
+                     每秒接口[ipv6IfIcmpOutRouterSolicits]。
+
+              irtad6 /秒
+                     收到的ICMP路由器公告消息的数量
+                     通过每秒接口[ipv6IfIcmpInRouterAdvertise-
+                     发言：]。
+
+              inbsol6 /秒
+                     收到的ICMP Neighbor Solicit消息的数量
+                     the interface per second [ipv6IfIcmpInNeighborSolicits].
+
+              onbsol6/s
+                     The number of ICMP Neighbor Solicitation messages sent by
+                     the interface per second [ipv6IfIcmpOutNeighborSolicits].
+
+              inbad6/s
+                     The  number  of  ICMP  Neighbor  Advertisement   messages
+                     received by the interface per second [ipv6IfIcmpInNeighb‐
+                     orAdvertisements].
+
+              onbad6/s
+                     The number of ICMP Neighbor Advertisement  messages  sent
+                     by  the interface per second [ipv6IfIcmpOutNeighborAdver‐
+                     tisements].
+
+              With the EICMP6 keyword, statistics about ICMPv6 error  messages
+              are reported.  Note that ICMPv6 statistics depend on sadc option
+              "-S IPV6" to be collected.  The following values  are  displayed
+              (formal SNMP names between square brackets):
+
+              ierr6/s
+                     The  number  of ICMP messages per second which the inter‐
+                     face received  but  determined  as  having  ICMP-specific
+                     errors   (bad   ICMP   checksums,   bad   length,   etc.)
+                     [ipv6IfIcmpInErrors]
+
+              idtunr6/s
+                     The  number  of  ICMP  Destination  Unreachable  messages
+                     received by the interface per second [ipv6IfIcmpInDestUn‐
+                     reachs].
+
+              odtunr6/s
+                     The number of ICMP Destination Unreachable messages  sent
+                     by the interface per second [ipv6IfIcmpOutDestUnreachs].
+
+              itmex6/s
+                     The number of ICMP Time Exceeded messages received by the
+                     interface per second [ipv6IfIcmpInTimeExcds].
+
+              otmex6/s
+                     The number of ICMP Time Exceeded  messages  sent  by  the
+                     interface per second [ipv6IfIcmpOutTimeExcds].
+
+              iprmpb6/s
+                     The number of ICMP Parameter Problem messages received by
+                     the interface per second [ipv6IfIcmpInParmProblems].
+
+              oprmpb6/s
+                     The number of ICMP Parameter Problem messages sent by the
+                     interface per second [ipv6IfIcmpOutParmProblems].
+
+              iredir6/s
+                     The number of Redirect messages received by the interface
+                     per second [ipv6IfIcmpInRedirects].
+
+              oredir6/s
+                     The number of Redirect messages sent by the interface  by
+                     second [ipv6IfIcmpOutRedirects].
+
+              ipck2b6/s
+                     The  number  of  ICMP Packet Too Big messages received by
+                     the interface per second [ipv6IfIcmpInPktTooBigs].
+
+              opck2b6/s
+                     The number of ICMP Packet Too Big messages  sent  by  the
+                     interface per second [ipv6IfIcmpOutPktTooBigs].
+
+              With  the  UDP6  keyword, statistics about UDPv6 network traffic
+              are reported.  Note that UDPv6 statistics depend on sadc  option
+              "-S  IPV6"  to be collected.  The following values are displayed
+              (formal SNMP names between square brackets):
+
+              idgm6/s
+                     The total number of UDP datagrams delivered per second to
+                     UDP users [udpInDatagrams].
+
+              odgm6/s
+                     The  total  number  of UDP datagrams sent per second from
+                     this entity [udpOutDatagrams].
+
+              noport6/s
+                     The total number of received UDP datagrams per second for
+                     which  there  was  no application at the destination port
+                     [udpNoPorts].
+
+              idgmer6/s
+                     The number of received  UDP  datagrams  per  second  that
+                     could not be delivered for reasons other than the lack of
+                     an application at the destination port [udpInErrors].
+
+              The ALL keyword is equivalent to  specifying  all  the  keywords
+              above and therefore all the network activities are reported.
+              将读数以二进制形式保存在文件中。每次阅读都在
+              一个单独的记录。 filename参数的默认值
+              是当前的每日数据文件，/ var / log / sa / sadd文件
+              -o选项不包括-f选项。所有可用数据
+              从内核保存在文件中（实际上，sar调用它
+              数据收集器sadc，带有选项“-S ALL”。请参阅sadc（8）手册
+              页）。
+
+       -P {cpu [，...] |所有}
+              报告指定处理器的每处理器统计信息
+              处理器。指定ALL关键字报告统计信息
+              每个处理器，以及所有处理器的全局处理器。
+              请注意，处理器0是第一个处理器。
+
+       -p漂亮的打印设备名称。将此选项与。结合使用
+              选项-d。默认情况下，名称打印为dev m-n，其中m和
+              n是设备的主要和次要编号。使用此
+              选项显示设备的名称（应该）
+              在/ dev。名称映射由/ etc / sysconfig / sys-控制
+              stat.ioconf。
+
+       -q报告队列长度和负载平均值。以下值是
+              显示：
+
+              runq-SZ
+                     运行队列长度（等待运行时间的任务数）。
+
+              plist中-SZ
+                     任务列表中的任务数。
+
+              ldavg-1
+                     最后一分钟的系统负载平均值。负载aver-
+                     年龄计算为可运行的平均数或
+                     正在运行的任务（R状态），以及unin-中的任务数量
+                     指定间隔内的可摧毁睡眠（D状态）。
+
+              ldavg-5
+                     过去5分钟的系统负载平均值。
+
+              ldavg-15
+                     过去15分钟的系统负载平均值。
+
+              受阻
+                     当前阻止的任务数，等待I / O.
+                     完成。
+
+       -R报告内存统计信息。将显示以下值：
+
+              frmpg /秒
+                     系统每秒释放的内存页数。一个
+                     负值表示分配的页数
+                     系统。请注意，页面的大小为4 kB或8 kB
+                     根据机器架构。
+
+              bufpg /秒
+                     用作缓冲区的附加内存页数
+                     系统每秒。负值意味着更少的页面
+                     用作系统的缓冲区。
+
+              campg /秒
+                     系统缓存的附加内存页数
+                     每秒。负值意味着更少的页面
+                     缓存。
+
+       -r报告内存利用率统计信息。以下值是
+              显示：
+
+              kbmemfree
+                     可用内存量，以千字节为单位。
+
+              kbmemused
+                     已用内存量，以千字节为单位。这不需要
+                     考虑到内核本身使用的内存。
+
+              ％memused
+                     已用内存的百分比。
+
+              kbbuffers
+                     内核用作缓冲区的内存量，单位为千
+                     字节。
+
+              kbcached
+                     内核用于缓存数据的内存量
+                     千字节。
+
+              kbcommit
+                     当前工作所需的内存量（千字节） - 
+                     加载。这是对需要多少RAM /交换的估计
+                     保证永远不会有内存不足。
+
+              ％承诺
+                     相关当前工作负载所需的内存百分比
+                     占内存总量（RAM +交换）。这个数量 - 
+                     因为内核通常可能大于100％
+                     过度使用内存。
+
+              kbactive
+                     活动内存量（以千字节为单位）
+                     最近使用过，通常不会回收，除非
+                     绝对有必要）。
+
+              kbinact
+                     非活动内存量（以千字节为单位）
+                     最近使用较少。它更有资格成为
+                     为其他目的而被收回）。
+
+              kbdirty
+                     以千字节为单位等待写回的内存量
+                     到磁盘。
+
+       -S报告交换空间利用率统计信息。以下值
+              显示：
+
+              kbswpfree
+                     以千字节为单位的可用交换空间量。
+
+              kbswpused
+                     以千字节为单位的已使用交换空间量。
+
+              ％swpused
+                     已使用交换空间的百分比。
+
+              kbswpcad
+                     以千字节为单位的缓存交换内存量。这是记忆 - 
+                     曾经被换掉的ory被换回来但是
+                     仍然在交换区域（如果需要内存）
+                     不需要再换掉，因为它是
+                     已经在交换区域。这节省了I / O）。
+
+              ％swpcad
+                     缓存交换内存相对于的百分比
+                     使用的交换空间量。
+
+       -s [hh：mm：ss]
+              设置数据的开始时间，导致sar命令
+              提取时间标记时间标记的时间标记
+              田间。默认开始时间是08:00:00。时间必须是
+              以24小时格式提供。此选项仅在数据时使用
+              从文件中读取（选项-f）。
+
+       -t从日常数据文件中读取数据时，请指明sar
+              应该在原始本地时间显示时间戳
+              数据文件创建者。如果没有此选项，则显示sar命令
+              用户区域设置时间的时间戳。
+
+       -u [全部]
+              报告CPU利用率。 ALL关键字表示所有
+              应显示CPU字段。报告可能会显示以下内容
+              领域：
+
+              ％用户
+                     执行时发生的CPU利用率百分比
+                     在用户层面（应用程序）。注意这个字段
+                     包括运行虚拟处理器的时间。
+
+              ％USR
+                     执行时发生的CPU利用率百分比
+                     在用户层面（应用程序）。注意这个字段
+                     不包括运行虚拟处理器所花费的时间。
+
+              ％不错
+                     执行时发生的CPU利用率百分比
+                     在用户级别具有良好的优先级。
+
+              ％系统
+                     执行时发生的CPU利用率百分比
+                     在系统级（内核）。注意这个字段
+                     包括维修硬件和软件所花费的时间
+                     中断。
+
+              ％SYS
+                     执行时发生的CPU利用率百分比
+                     在系统级（内核）。注意这个字段
+                     不包括维修硬件或软件的时间
+                     中断。
+
+              IOWAIT％
+                     CPU或CPU空闲时间的百分比
+                     系统有一个出色的磁盘I / O请求。
+
+              ％偷
+                     处于非自愿等待时间的百分比
+                     管理程序正在服务时的CPU或CPU
+                     另一个虚拟处理器
+
+              ％IRQ
+                     CPU或CPU用于服务的时间百分比
+                     硬件中断。
+
+              ％柔软的
+                     CPU或CPU用于服务的时间百分比
+                     软件中断。
+
+              ％客人
+                     CPU或CPU运行虚拟机所花费的时间百分比
+                     tual处理器。
+
+              ％gnice
+                     CPU或CPU运行a所花费的时间百分比
+                     客人。
+
+              ％闲
+                     CPU或CPU闲置的时间百分比
+                     系统没有出色的磁盘I / O请求。
+
+              注意：在SMP机器上，没有任何活动的处理器
+              完全没有（每个字段0.00）是一个禁用（离线）亲
+              cessor。
+
+       -V打印版本号然后退出。
+
+       -v报告inode，文件和其他内核表的状态。以下
+              显示低位值：
+
+              dentunusd
+                     目录高速缓存中未使用的高速缓存条目数。
+
+              文件-NR
+                     系统使用的文件句柄数。
+
+              索引节点-NR
+                     系统使用的inode处理程序数。
+
+              PTY-NR
+                     系统使用的伪终端数。
+
+       -W报告交换统计信息。将显示以下值：
+
+              pswpin /秒
+                     系统每秒带来的交换页面总数 - 
+                     OND。
+
+              pswpout /秒
+                     系统带来的交换页面总数
+                     第二。
+
+       -w报告任务创建和系统切换活动。
+
+              PROC /秒
+                     每秒创建的任务总数。
+
+              cswch /秒
+                     每秒上下文切换的总数。
+
+       -y报告TTY设备活动。将显示以下值：
+
+              rcvin /秒
+                     当前每秒接收中断的数量
+                     串行线。串行线号在TTY col-中给出
+                     UMN。
+
+              xmtin /秒
+                     电流每秒的发送中断数
+                     串行线。
+
+              framerr /秒
+                     当前串行的每秒帧错误数
+                     线。
+
+              prtyerr /秒
+                     当前串行的每秒奇偶校验错误数
+                     线。
+
+              BRK /秒
+                     当前串行线的每秒中断数。
+
+              OVRUN /秒
+                     当前序列的每秒溢出错误数
+                     线。
+
+
+环境
+       sar命令考虑以下环境变量：
+
+
+       S_TIME_FORMAT
+              如果此变量存在且其值为ISO，则为当前值
+              在报表中打印日期时，将忽略区域设置
+              头.sar命令将使用ISO 8601格式（YYYY-MM-
+              DD）相反。
+
+
+       S_TIME_DEF_TIME
+              如果此变量存在且其值为UTC，那么sar将保存
+              其数据以UTC时间显示（数据仍将以本地方式显示
+              时间）。 sar还将使用UTC时间而不是本地时间
+              确定位于/ var / log / sa中的当前每日数据文件
+              目录。此变量可能对具有用户的服务器有用
+              位于几个时区。
+
+例子
+       sar -u 2 5
+              每2秒报告CPU利用率。 5行是dis-
+              播放。
+
+       sar -I 14 -o int14.file 2 10
+              每2秒报告一次IRQ 14的统计数据。 10行是
+              显示。数据存储在名为int14.file的文件中。
+
+       sar -r -n DEV -f / var / log / sa / sa16
+              显示日常数据文件中保存的内存和网络统计信息
+              'SA16'。
+
+       sar -A
+              显示当前每日数据文件中保存的所有统计信息。
+
+BUGS
+       必须安装/ proc文件系统才能使sar命令生效。
+
+       所有统计数据都不一定可用，具体取决于ker-
+       使用的nel版本。 sar假设您使用至少2.6 ker-
+       NEL。
+
+FILES
+       在/ var /日志/ SA / SADD
+              指示每日数据文件，其中dd参数是数字
+              代表该月的某一天。
+
+       / proc包含具有系统统计信息的各种文件。
+
+作者
+       Sebastien Godard（sysstat <at> orange.fr）
+
+也可以看看
+       sadc（8），sa1（8），sa2（8），sadf（1），pidstat（1），mpstat（1），iostat（1），
+       的vmstat（8）
+
+       http://pagesperso-orange.fr/sebastien.godard/
+
+
+
+Linux 2012年9月SAR（1）

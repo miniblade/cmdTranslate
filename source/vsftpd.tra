@@ -1,0 +1,70 @@
+VSFTPD（8）BSD系统管理员手册VSFTPD（8）
+
+名称
+     vsftpd  - 非常安全的FTP守护进程
+
+概要
+     vsftpd [配置文件和/或选项]
+
+描述
+     vsftpd是非常安全的文件传输协议守护程序。服务器可以通过
+     “超级服务”，如inetd（8）或xinetd（8）启动。或者，可以启动vsftpd
+     独立模式，在这种情况下，vsftpd本身将在网络上侦听。后一种模式是
+     更易于使用和记忆。通过设置listen = YES来激活它
+     /etc/vsftpd/vsftpd.conf。然后直接执行vsftpd二进制文件将启动FTP服务立刻准备客户连接。
+
+     Systemd更改了vsftpd守护程序启动。 vsftpd包中包含vsftpd-generator
+     脚本生成到/var/run/systemd/generator/vsftpd.target.wants目录的符号链接。
+     例如，在例如调用发生器'systemctl --system daemon-reload'。所有这些象征性的
+     链接链接/usr/lib/systemd/system/vsftpd@.service文件。 vsftpd守护程序是/是
+     通过以下方式之一来控制：
+
+     1.使用默认的/etc/vsftpd/vsftpd.conf配置文件的单个守护程序
+     #systemctl {start，stop，...} vsftpd [.service]
+
+     2.使用/etc/vsftpd/<conf-name>.conf的单个守护进程
+     #systemctl {start，stop，...} vsftpd @ <conf-name> [.service]
+
+     3.所有实例在一起
+     #systemctl {restart，stop} vsftpd.target
+
+     有关详细信息，请参阅systemd.unit（5），systemd.target（5）。
+
+OPTIONS
+     可以在命令行上提供可选的配置文件。这些文件必须是
+     如果以root身份运行，则以root身份拥有任何命令行选项都不以“ - ”字符开头
+     被视为将被加载的配置文件。请注意，配置文件加载在
+     在命令行遇到它们的严格顺序。如果没有配置文件是speci
+     fied，毕竟将加载/etc/vsftpd/vsftpd.conf的默认配置文件
+     处理其他命令行选项。
+
+     支持的选项是：
+
+     -v打印版本信息并退出，即使遇到其他选项也是如此。
+
+     -ooption =值
+             根据配置文件中的格式设置单个选项，值对。多个-o
+             支持选项，并且相对于它们的出现，它们按严格的顺序应用
+             命令行中的ance，包括与加载配置文件混合。
+
+例子
+     vsftpd -olisten = NO /etc/vsftpd/vsftpd.conf -oftpd_banner = blah
+
+     该示例覆盖vsftpd的“listen”选项的内置默认值为NO，但随后
+     加载/etc/vsftpd/vsftpd.conf可能会覆盖该设置。最后，“ftpd_banner”
+     设置设置为“blah”，它会覆盖任何默认的vsftpd设置和任何相同的设置 - 
+     在配置文件中的ting。
+
+FILES
+     /etc/vsftpd/vsftpd.conf
+
+     /usr/lib/systemd/system/vsftpd.service
+
+     /usr/lib/systemd/system/vsftpd@.service
+
+     /usr/lib/systemd/system/vsftpd.target
+
+也可以看看
+     vsftpd.conf（5）systemd.unit（5）
+
+                                           2001年3月8日
